@@ -1,13 +1,26 @@
 import type { ConstructorParams, LogLine } from "@browserbasehq/stagehand";
 import dotenv from "dotenv";
+false;
+false;
 
 dotenv.config();
 
-const StagehandConfig: ConstructorParams = {
+export const StageHandLocalConfig: ConstructorParams = {
+  env: "LOCAL",
+  modelName: "o3-mini" /* Name of the model to use */,
+  modelClientOptions: {
+    apiKey: process.env.OPENAI_API_KEY,
+  } /* Configuration options for the model client */,
+  localBrowserLaunchOptions: {
+    headless: false,
+  },
+};
+
+export const StagehandConfig: ConstructorParams = {
   env: "BROWSERBASE",
   apiKey: process.env.BROWSERBASE_API_KEY /* API key for authentication */,
   projectId: process.env.BROWSERBASE_PROJECT_ID /* Project identifier */,
-  debugDom: true /* Enable DOM debugging features */,
+  debugDom: undefined /* Enable DOM debugging features */,
   headless: false /* Run browser in headless mode */,
   logger: (message: LogLine) =>
     console.log(logLineToString(message)) /* Custom logging function */,
@@ -15,14 +28,15 @@ const StagehandConfig: ConstructorParams = {
   browserbaseSessionCreateParams: {
     projectId: process.env.BROWSERBASE_PROJECT_ID!,
   },
-  enableCaching: false /* Enable caching functionality */,
+  enableCaching: undefined /* Enable caching functionality */,
   browserbaseSessionID:
     undefined /* Session ID for resuming Browserbase sessions */,
-  modelName: "gpt-4o" /* Name of the model to use */,
+  modelName: "o3-mini" /* Name of the model to use */,
   modelClientOptions: {
     apiKey: process.env.OPENAI_API_KEY,
   } /* Configuration options for the model client */,
 };
+
 export default StagehandConfig;
 
 /**
