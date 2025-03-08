@@ -1,33 +1,28 @@
 import type { ConstructorParams, LogLine } from "@browserbasehq/stagehand";
 import dotenv from "dotenv";
-false
-false
 
 dotenv.config();
 
 const StagehandConfig: ConstructorParams = {
-  env: "LOCAL",
+  env: "BROWSERBASE",
   apiKey: process.env.BROWSERBASE_API_KEY /* API key for authentication */,
   projectId: process.env.BROWSERBASE_PROJECT_ID /* Project identifier */,
-  debugDom: undefined /* Enable DOM debugging features */,
-  headless: true /* Run browser in headless mode */,
+  debugDom: true /* Enable DOM debugging features */,
+  headless: false /* Run browser in headless mode */,
   logger: (message: LogLine) =>
     console.log(logLineToString(message)) /* Custom logging function */,
   domSettleTimeoutMs: 30_000 /* Timeout for DOM to settle in milliseconds */,
   browserbaseSessionCreateParams: {
     projectId: process.env.BROWSERBASE_PROJECT_ID!,
   },
-  enableCaching: undefined /* Enable caching functionality */,
+  enableCaching: false /* Enable caching functionality */,
   browserbaseSessionID:
     undefined /* Session ID for resuming Browserbase sessions */,
   modelName: "gpt-4o" /* Name of the model to use */,
-      modelClientOptions: {
-        apiKey: process.env.OPENAI_API_KEY,
-      } /* Configuration options for the model client */,
-  
-  
+  modelClientOptions: {
+    apiKey: process.env.OPENAI_API_KEY,
+  } /* Configuration options for the model client */,
 };
-
 export default StagehandConfig;
 
 /**
