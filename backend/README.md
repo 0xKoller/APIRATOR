@@ -1,3 +1,75 @@
+# APIRATOR Backend
+
+This is a backend Express server that exposes an endpoint to run Stagehand automations.
+
+## Setup
+
+1. Clone the repository
+2. Navigate to the backend directory
+3. Install dependencies:
+
+```
+npm install
+```
+
+4. Create a `.env` file based on `.env.example`
+
+## Running the Application
+
+### Development Mode (with hot reload)
+
+```
+npm run dev
+```
+
+This starts the server with nodemon, which automatically restarts the server when files change.
+
+### Production Mode
+
+```
+npm run build
+npm run start:server
+```
+
+## Available Endpoints
+
+### Health Check
+
+```
+GET /health
+```
+
+Returns a simple status response to confirm the server is running.
+
+### Run Stagehand Automation
+
+```
+POST /run
+```
+
+Executes the main Stagehand automation function and returns the result.
+
+Example request:
+
+```bash
+curl -X POST http://localhost:3000/run \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+## Legacy Mode
+
+To run the application in the original mode (without Express):
+
+```
+npm run start
+```
+
+## Environment Variables
+
+- `PORT`: The port for the Express server (default: 3000)
+- Other variables from `.env.example`
+
 # 🤘 Welcome to Stagehand!
 
 Hey! This is a project built with [Stagehand](https://github.com/browserbase/stagehand).
