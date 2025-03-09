@@ -114,6 +114,32 @@ router.post("/messages", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/auth-url", async (req: Request, res: Response) => {
+  try {
+    const userId = req.body.userId;
+    const unipileProvider = await getUnipileProvider();
+    const url = await unipileProvider.generateHostedAuthLink(userId);
+    res.json({ url });
+  } catch (error) {
+    console.error(error, "Error generando URL de autenticación de Unipile");
+    res.status(500).json({
+      error: "Error al generar URL de autenticación",
+    });
+  }
+});
+
+router.post("/callback", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body, "Callback de autenticación de Unipile recibido");
+    res.status(200).send("OK");
+  } catch (error) {
+    console.error(error, "Error procesando callback de Unipile");
+    res.status(500).json({
+      error: "Error al procesar callback",
+    });
+  }
+});
+
 // Generate authentication link
 router.post("/auth-link", async (req: Request, res: Response) => {
   try {
