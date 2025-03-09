@@ -118,6 +118,7 @@ router.post("/auth-url", async (req: Request, res: Response) => {
   try {
     const userId = req.body.userId;
     const unipileProvider = await getUnipileProvider();
+    console.log(unipileProvider, "Unipile provider");
     const url = await unipileProvider.generateHostedAuthLink(userId);
     res.json({ url });
   } catch (error) {

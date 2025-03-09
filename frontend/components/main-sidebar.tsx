@@ -11,7 +11,30 @@ import { useNetworkFinderStore } from "@/store/network-finder-store";
 import { useHistoryStore } from "@/store/history";
 import { useTabStore } from "@/store/tab-store";
 import { cn } from "@/lib/utils";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { LinkedInConnectDialog } from "./linkedin-connect-dialog";
+
+const LinkedInSection = memo(() => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  return (
+    <div className='px-3'>
+      <Button variant='outline' className='w-full' onClick={handleOpen}>
+        Connect LinkedIn
+      </Button>
+      <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />
+    </div>
+  );
+});
+LinkedInSection.displayName = "LinkedInSection";
 
 const SidebarContent = memo(() => (
   <div className='h-full py-6'>
@@ -20,6 +43,8 @@ const SidebarContent = memo(() => (
         <h2 className='mb-4 px-4 text-lg font-semibold'>Introfy</h2>
         <TabsSection />
       </div>
+      <Separator />
+      <LinkedInSection />
     </div>
   </div>
 ));
