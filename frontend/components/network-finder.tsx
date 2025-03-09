@@ -137,25 +137,14 @@ export default function NetworkFinder() {
     try {
       // Make API call to backend
       setSearchingStep(1); // Fetching profile
-      // const response = await axios.get(
-      //   `${process.env.NEXT_PUBLIC_API_URL}/api/linkedin/profile`,
-      //   {
-      //     params: {
-      //       url: url,
-      //     },
-      //   }
-      // );
-      const response = {
-        data: {
-          success: true,
-          data: {
-            id: "1234567890",
-            name: "John Doe",
-            company: "Acme Corporation",
-            avatar: "/placeholder.svg?height=60&width=60",
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/linkedin/profile`,
+        {
+          params: {
+            url: url,
           },
-        },
-      };
+        }
+      );
 
       console.log("LinkedIn Profile API Response:", response.data);
       console.log("Profile Data:", response.data.data);

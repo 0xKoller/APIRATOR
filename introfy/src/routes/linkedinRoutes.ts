@@ -164,7 +164,9 @@ router.get("/profile-likes", async (req: Request, res: Response) => {
 router.get("/user-interactions", async (req: Request, res: Response) => {
   try {
     const userInteractions =
-      await linkedinConnectionService.getUserInteractions();
+      await linkedinConnectionService.getUserInteractions(
+        (req.query.url as string).split("/in/")[1].replace("/", "")
+      );
 
     return res.status(200).json({
       success: true,

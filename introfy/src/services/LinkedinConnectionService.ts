@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { parse } from "csv-parse/sync";
+import { LinkedinProfileService } from "./LinkedinProfileService";
 
 export interface LinkedinConnection {
   "First Name": string;
@@ -108,17 +109,20 @@ class LinkedinConnectionService {
    * Get all interactions between Luciano Trujillo and LinkedIn connections
    * @returns Array of users with their interactions and interaction counts
    */
-  public async getUserInteractions(): Promise<UserInteraction[]> {
+  public async getUserInteractions(
+    username: string
+  ): Promise<UserInteraction[]> {
     try {
       // Get all connections from CSV
       const connections = await this.getAllConnections();
 
       // Read interactions file
-      const interactionsContent = fs.readFileSync(
-        this.interactionsFilePath,
-        "utf8"
+      const linkedinProfileService = new LinkedinProfileService();
+      const interactionsContent = await linkedinProfileService.getProfileLikes(
+        username,
+        0
       );
-      const interactionsData = JSON.parse(interactionsContent);
+      const interactionsData = interactionsContent;
 
       // Create a map of URL to connections for faster lookup
       const connectionMap = new Map<string, LinkedinConnection>();
