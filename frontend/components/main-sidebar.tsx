@@ -15,6 +15,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { LinkedInConnectDialog } from "./linkedin-connect-dialog";
 import { LinkedInProfileForm } from "./linkedin-profile-form";
 import { useLinkedinProfileStore } from "@/store/linkedin-profile-store";
+import Image from "next/image";
 
 const LinkedInSection = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +68,13 @@ const SidebarContent = memo(() => (
   <div className="h-full py-6">
     <div className="flex flex-col h-full space-y-4">
       <div className="px-3">
-        <h2 className="mb-4 px-4 text-lg font-semibold">Introfy</h2>
+        <Image
+          className="mb-2"
+          src="/logo.png"
+          alt="Introfy"
+          width={100}
+          height={100}
+        />
         <TabsSection />
       </div>
       <Separator />
