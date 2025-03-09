@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { linkedinProfileService } from "../services/LinkedinProfileService";
+import { linkedinConnectionService } from "../services/LinkedinConnectionService";
 
 const router = express.Router();
 
@@ -69,6 +70,82 @@ router.get("/post/interactors", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching LinkedIn post interactors:", error);
     res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
+  }
+});
+
+/**
+ * @route GET /api/linkedin/filter-connections
+ * @desc Get LinkedIn connections excluding those in the reactors list
+ * @access Public
+ */
+router.get("/filter-connections", async (req: Request, res: Response) => {
+  try {
+    const filteredConnections =
+      await linkedinConnectionService.getFilteredConnections();
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        connections: filteredConnections,
+        total: filteredConnections.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error filtering LinkedIn connections:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
+  }
+});
+
+/**
+ * @route GET /api/linkedin/profile-likes
+ * @desc Get LinkedIn profile likes by username with pagination
+ * @access Public
+ * @param {string} username - LinkedIn username
+ * @param {number} start - Pagination start index
+ */
+router.get("/profile-likes", async (req: Request, res: Response) => {
+  try {
+    const username = req.query.username as string;
+    const start = req.query.start ? parseInt(req.query.start as string) : 0;
+
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        message: "Username is required",
+      });
+    }
+
+    const profileLikes = await linkedinProfileService.getProfileLikes(
+      username,
+      start
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      data: profileLikes.data,
+    });
+  } catch (error) {
+    console.error("Error fetching LinkedIn profile likes:", error);
+
+    // Check if this is a Zod validation error
+    if (error instanceof Error && error.message.includes("invalid_type")) {
+      return res.status(500).json({
+        success: false,
+        message: "Data validation error - API response format has changed",
+        error: error.message,
+      });
+    }
+
+    return res.status(500).json({
       success: false,
       message:
         error instanceof Error ? error.message : "An unknown error occurred",

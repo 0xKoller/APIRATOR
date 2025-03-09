@@ -140,6 +140,73 @@ export type LinkedinPostCommentsResponse = z.infer<
   typeof LinkedinPostCommentsResponseSchema
 >;
 
+// Profile Likes Types
+export const LinkedinProfileLikeAuthorSchema = z
+  .object({
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    headline: z.string().optional().nullable(),
+    username: z.string().optional().nullable(),
+    url: z.string().optional().nullable(),
+  })
+  .optional()
+  .nullable()
+  .default({});
+
+export const LinkedinProfileLikeImageSchema = z.object({
+  url: z.string(),
+  width: z.number().optional().nullable(),
+  height: z.number().optional().nullable(),
+});
+
+export const LinkedinProfileLikeSchema = z.object({
+  action: z.string(),
+  entityType: z.string().optional().nullable(),
+  text: z.string().optional().nullable(),
+  totalReactionCount: z.number().optional().nullable().default(0),
+  likeCount: z.number().optional().nullable().default(0),
+  appreciationCount: z.number().optional().nullable(),
+  empathyCount: z.number().optional().nullable(),
+  praiseCount: z.number().optional().nullable(),
+  InterestCount: z.number().optional().nullable(),
+  funnyCount: z.number().optional().nullable(),
+  commentsCount: z.number().optional().nullable().default(0),
+  repostsCount: z.number().optional().nullable(),
+  postUrl: z.string().optional().nullable(),
+  postedAt: z.string().optional().nullable(),
+  postedDate: z.string().optional().nullable(),
+  shareUrn: z.string().optional().nullable(),
+  urn: z.string().optional().nullable(),
+  author: LinkedinProfileLikeAuthorSchema,
+  image: z.array(LinkedinProfileLikeImageSchema).optional().nullable(),
+  video: z.array(LinkedinProfileLikeImageSchema).optional().nullable(),
+  company: z.object({}).optional().nullable(),
+  comment: z
+    .object({
+      text: z.string().optional().nullable(),
+      author: z.object({}).optional().nullable(),
+      company: z.object({}).optional().nullable(),
+    })
+    .optional()
+    .nullable(),
+  article: z.object({}).optional().nullable(),
+});
+
+export type LinkedinProfileLike = z.infer<typeof LinkedinProfileLikeSchema>;
+
+export const LinkedinProfileLikesResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    items: z.array(LinkedinProfileLikeSchema),
+    paginationToken: z.string().optional(),
+  }),
+});
+
+export type LinkedinProfileLikesResponse = z.infer<
+  typeof LinkedinProfileLikesResponseSchema
+>;
+
 // Configure axios retry logic
 axiosRetry(axios, {
   retries: 3,
@@ -362,6 +429,63 @@ export class LinkedinProfileService {
       return { reactions, comments };
     } catch (error) {
       console.error(`Error fetching post interactors: ${error}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets profile likes for a LinkedIn user
+   * @param username The LinkedIn username
+   * @param start Starting position for pagination
+   * @returns LinkedIn profile likes
+   */
+  public async getProfileLikes(
+    username: string,
+    start: number = 0
+  ): Promise<LinkedinProfileLikesResponse> {
+    try {
+      console.info(
+        `Fetching LinkedIn profile likes for user: ${username}, starting from: ${start}`
+      );
+
+      const response = await axios.get(
+        `https://${this.API_HOST}/get-profile-likes`,
+        {
+          params: {
+            username,
+            start,
+          },
+          headers: {
+            "x-rapidapi-host": this.API_HOST,
+            "x-rapidapi-key": this.API_KEY,
+          },
+        }
+      );
+
+      // Pre-process the data to ensure it conforms to the schema
+      if (
+        response.data?.data?.items &&
+        Array.isArray(response.data.data.items)
+      ) {
+        // Ensure each item has the required fields with defaults
+        response.data.data.items = response.data.data.items.map((item: any) => {
+          // Ensure the author object exists
+          if (!item.author) {
+            item.author = {};
+          }
+
+          // Ensure commentsCount exists
+          if (item.commentsCount === undefined) {
+            item.commentsCount = 0;
+          }
+
+          return item;
+        });
+      }
+
+      return LinkedinProfileLikesResponseSchema.parse(response.data);
+    } catch (error) {
+      console.error(`Error fetching profile likes: ${error}`);
       throw error;
     }
   }
