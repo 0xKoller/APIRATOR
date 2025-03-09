@@ -14,6 +14,7 @@ import {
   Contact,
   LinkedInInteraction,
 } from "@/store/network-finder-store";
+import { useHistoryStore } from "@/store/history";
 
 // Mock data for contacts
 const mockContacts: Contact[] = [
@@ -79,7 +80,6 @@ export default function NetworkFinder() {
     setShowIntroModal,
     setSelectedContact,
     setIntroMessage,
-    resetStore,
   } = useNetworkFinderStore();
 
   // Add searchingStep state
@@ -91,6 +91,9 @@ export default function NetworkFinder() {
 
   // Particle system ref
   const particlesRef = useRef<HTMLDivElement>(null);
+
+  // History store
+  const { addSearch } = useHistoryStore();
 
   // Update mouse position for interactive effects
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -220,6 +223,13 @@ export default function NetworkFinder() {
             setTimeout(() => {
               setResults(processedResults);
               setStep("results");
+
+              // Add to history
+              addSearch({
+                query: url.trim(),
+                type: "person",
+                result: processedResults,
+              });
             }, 1500);
           }
         } catch (error) {
@@ -561,26 +571,6 @@ export default function NetworkFinder() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className='max-w-2xl mx-auto'
           >
-            <div className='flex justify-center mb-8'>
-              <div className='flex space-x-2'>
-                <motion.button
-                  className='px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-all bg-black text-white'
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                >
-                  Best Connections
-                </motion.button>
-                <motion.button
-                  onClick={resetStore}
-                  className='px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-all bg-white text-black hover:bg-gray-50'
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                >
-                  New Search
-                </motion.button>
-              </div>
-            </div>
-
             <div className='space-y-4'>
               {results.slice(0, 10).map((contact, index) => {
                 const totalInteractions = contact.interactionCount;

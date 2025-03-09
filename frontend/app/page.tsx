@@ -1,12 +1,13 @@
-import NetworkFinder from "@/components/network-finder"
+import { MainSidebar } from "@/components/main-sidebar";
+import NetworkFinder from "@/components/network-finder";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-800 p-4 md:p-8 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <div className='flex min-h-screen'>
+      <MainSidebar />
+      <main className='flex-1 bg-gray-50 text-gray-800 p-4 md:p-8 overflow-hidden'>
         <NetworkFinder />
-      </div>
-    </main>
-  )
+      </main>
+    </div>
+  );
 }
-
