@@ -52,7 +52,7 @@ const LinkedInSection = memo(() => {
           </Button>
         </>
       ) : (
-        <div className="relative bg-white rounded-xl overflow-hidden border border-gray-200 p-4 pr-12 flex flex-col items-center text-center">
+        <div className="relative bg-white rounded-xl overflow-hidden border border-gray-200 p-4 flex flex-col items-center text-center">
           <div className="absolute top-4 right-4 flex items-center">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -77,10 +77,21 @@ const LinkedInSection = memo(() => {
             </svg>
           </div>
 
+          <h3 className="text-sm font-medium text-gray-900">
+            LinkedIn Connected
+          </h3>
           <p className="text-xs text-gray-500 mt-1">You are connected as</p>
-          <p className="text-xs font-semibold text-blue-600 mt-1">
-            {linkedinUrl}
+          <p className="text-sm font-semibold text-blue-600 mt-1">
+            {linkedinUrl?.split("/in/")[1].split("/")?.[0] ||
+              linkedinId ||
+              "User"}
           </p>
+
+          <div className="w-full mt-3 pt-3 border-t border-gray-100">
+            <p className="text-xs text-green-600 font-medium">
+              Ready to send messages
+            </p>
+          </div>
         </div>
       )}
       <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />

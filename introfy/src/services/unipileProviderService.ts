@@ -399,7 +399,7 @@ export class UnipileProvider implements MessagingProvider {
       console.log(accountId, "[UnipileProvider] Obteniendo conexiones");
       const response = await client.users.getAllRelations({
         account_id: accountId,
-        limit: 10,
+        limit: 100,
       });
       return response.items;
     } catch (error) {

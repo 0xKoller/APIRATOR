@@ -119,9 +119,9 @@ class LinkedinConnectionService {
   ): Promise<UserInteraction[]> {
     try {
       // Get all connections from CSV
-      const connections = await (
-        await getUnipileProvider()
-      ).getConnections(unipileAccountId);
+      // const connections = await (
+      //   await getUnipileProvider()
+      // ).getConnections(unipileAccountId);
 
       // Read interactions file
       const linkedinProfileService = new LinkedinProfileService();
@@ -132,9 +132,16 @@ class LinkedinConnectionService {
       const interactionsData = interactionsContent;
 
       // Create a map of URL to connections for faster lookup
-      const connectionMap = new Map<string, UnipileConnection>();
+      // const connectionMap = new Map<string, UnipileConnection>();
+      // for (const connection of connections) {
+      //   connectionMap.set(connection.public_profile_url, connection);
+      // }
+
+      // take connectionMap from csv
+      const connectionMap = new Map<string, LinkedinConnection>();
+      const connections = await this.getAllConnections();
       for (const connection of connections) {
-        connectionMap.set(connection.public_profile_url, connection);
+        connectionMap.set(connection.URL, connection);
       }
 
       // Track interactions per user
@@ -156,7 +163,10 @@ class LinkedinConnectionService {
 
             if (authorUrl && connectionMap.has(authorUrl)) {
               // This is an interaction with a connection
-              if (!userInteractions.has(authorUrl)) {
+              if (
+                !userInteractions.has(authorUrl) &&
+                authorUrl !== `https://www.linkedin.com/in/${username}`
+              ) {
                 userInteractions.set(authorUrl, {
                   user: authorUrl,
                   interactions: [],
@@ -166,8 +176,10 @@ class LinkedinConnectionService {
 
               // Add this interaction to the user's interactions
               const userInteraction = userInteractions.get(authorUrl)!;
-              userInteraction.interactions.push(item);
-              userInteraction.interactionCount++;
+              if (authorUrl !== `https://www.linkedin.com/in/${username}`) {
+                userInteraction.interactions.push(item);
+                userInteraction.interactionCount++;
+              }
             }
           }
         }
