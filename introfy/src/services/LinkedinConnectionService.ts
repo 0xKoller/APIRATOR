@@ -24,6 +24,12 @@ export interface LinkedinReactorsData {
   reactions: LinkedinReactor[];
 }
 
+export interface UserInteraction {
+  user: string;
+  interactions: any[];
+  interactionCount: number;
+}
+
 class LinkedinConnectionService {
   private connectionsFilePath = path.resolve(
     __dirname,
@@ -32,6 +38,10 @@ class LinkedinConnectionService {
   private reactorsFilePath = path.resolve(
     __dirname,
     "../linkedin_reactors.json"
+  );
+  private interactionsFilePath = path.resolve(
+    __dirname,
+    "../linkedin_profile_interactions_given.json"
   );
 
   /**
@@ -90,6 +100,72 @@ class LinkedinConnectionService {
       return filteredConnections;
     } catch (error) {
       console.error("Error filtering connections:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all interactions between Luciano Trujillo and LinkedIn connections
+   * @returns Array of users with their interactions and interaction counts
+   */
+  public async getUserInteractions(): Promise<UserInteraction[]> {
+    try {
+      // Get all connections from CSV
+      const connections = await this.getAllConnections();
+
+      // Read interactions file
+      const interactionsContent = fs.readFileSync(
+        this.interactionsFilePath,
+        "utf8"
+      );
+      const interactionsData = JSON.parse(interactionsContent);
+
+      // Create a map of URL to connections for faster lookup
+      const connectionMap = new Map<string, LinkedinConnection>();
+      for (const connection of connections) {
+        connectionMap.set(connection.URL, connection);
+      }
+
+      // Track interactions per user
+      const userInteractions = new Map<
+        string,
+        {
+          user: string;
+          interactions: any[];
+          interactionCount: number;
+        }
+      >();
+
+      // Process all interaction items
+      if (interactionsData.data && interactionsData.data.items) {
+        for (const item of interactionsData.data.items) {
+          // Check if this is an interaction with Luciano Trujillo
+          if (item.action && item.action.includes("Luciano Trujillo")) {
+            const authorUrl = item.author?.url;
+
+            if (authorUrl && connectionMap.has(authorUrl)) {
+              // This is an interaction with a connection
+              if (!userInteractions.has(authorUrl)) {
+                userInteractions.set(authorUrl, {
+                  user: authorUrl,
+                  interactions: [],
+                  interactionCount: 0,
+                });
+              }
+
+              // Add this interaction to the user's interactions
+              const userInteraction = userInteractions.get(authorUrl)!;
+              userInteraction.interactions.push(item);
+              userInteraction.interactionCount++;
+            }
+          }
+        }
+      }
+
+      // Convert map to array
+      return Array.from(userInteractions.values());
+    } catch (error) {
+      console.error("Error calculating user interactions:", error);
       throw error;
     }
   }

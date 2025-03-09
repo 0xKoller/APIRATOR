@@ -153,4 +153,31 @@ router.get("/profile-likes", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @route GET /api/linkedin/user-interactions
+ * @desc Get interactions between Luciano Trujillo and LinkedIn connections
+ * @access Public
+ */
+router.get("/user-interactions", async (req: Request, res: Response) => {
+  try {
+    const userInteractions =
+      await linkedinConnectionService.getUserInteractions();
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        interactions: userInteractions,
+        total: userInteractions.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user interactions:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
+  }
+});
+
 export default router;
