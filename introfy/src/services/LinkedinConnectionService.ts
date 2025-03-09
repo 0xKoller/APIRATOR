@@ -162,8 +162,10 @@ class LinkedinConnectionService {
         }
       }
 
-      // Convert map to array
-      return Array.from(userInteractions.values());
+      // Convert map to array and sort by interaction count (descending)
+      return Array.from(userInteractions.values()).sort(
+        (a, b) => b.interactionCount - a.interactionCount
+      );
     } catch (error) {
       console.error("Error calculating user interactions:", error);
       throw error;
