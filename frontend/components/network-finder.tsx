@@ -186,8 +186,8 @@ export default function NetworkFinder() {
 
             const processedResults = filterResponse.data.data.interactions
               .map((interaction: LinkedInInteraction) => {
+                //@ts-expect-error - interactionCount is not defined in the LinkedInInteraction interface
                 const totalInteractions = interaction.interactionCount;
-                debugger;
                 const contact = {
                   id: interaction.interactions[0].urn,
                   name: `${interaction.interactions[0].author.firstName} ${interaction.interactions[0].author.lastName}`,
