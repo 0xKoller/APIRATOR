@@ -13,13 +13,16 @@ interface HistoryListProps {
 
 export function HistoryList({ type }: HistoryListProps) {
   const { searches, removeSearch, selectSearch } = useHistoryStore();
-  const { setResults, setStep } = useNetworkFinderStore();
+  const { setResults, setStep, setTargetPerson } = useNetworkFinderStore();
   const filteredSearches = searches.filter((search) => search.type === type);
   console.log(searches);
   const handleSearchClick = (search: (typeof searches)[0]) => {
     selectSearch(search.id);
     if (search.result) {
       setResults(search.result);
+      if (search.targetPerson) {
+        setTargetPerson(search.targetPerson);
+      }
       setStep("results");
     }
   };
@@ -42,28 +45,40 @@ export function HistoryList({ type }: HistoryListProps) {
         >
           <div className='flex items-center justify-between gap-2'>
             <div className='flex items-center gap-2 min-w-0'>
-              {search.result && search.result[0] && (
+              {search.targetPerson ? (
                 <Avatar className='h-8 w-8'>
-                  <AvatarImage src={search.result[0].avatar} />
+                  <AvatarImage src={search.targetPerson.avatar} />
                   <AvatarFallback>
                     <User className='h-4 w-4' />
                   </AvatarFallback>
                 </Avatar>
+              ) : (
+                search.result &&
+                search.result[0] && (
+                  <Avatar className='h-8 w-8'>
+                    <AvatarImage src={search.result[0].avatar} />
+                    <AvatarFallback>
+                      <User className='h-4 w-4' />
+                    </AvatarFallback>
+                  </Avatar>
+                )
               )}
               <div className='truncate'>
                 <p className='text-sm font-medium truncate'>
-                  {search.result[0].name}
+                  {search.targetPerson
+                    ? search.targetPerson.name
+                    : search.result[0].name}
                 </p>
                 <div className='flex items-center gap-2 text-xs text-muted-foreground'>
                   <Clock className='h-3 w-3' />
                   {formatDistanceToNow(search.timestamp, { addSuffix: true })}
-                  {search.result && (
+                  {/* {search.result && (
                     <>
                       <span>•</span>
                       <Users className='h-3 w-3' />
                       {search.result.length} connections
                     </>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

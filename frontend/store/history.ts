@@ -7,6 +7,11 @@ interface SearchResult {
   timestamp: number;
   type: "person" | "icp";
   result: any; // Replace with proper type based on your API response
+  targetPerson?: {
+    name: string;
+    company: string;
+    avatar: string;
+  };
 }
 
 interface HistoryState {

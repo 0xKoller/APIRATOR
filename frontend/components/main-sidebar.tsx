@@ -14,12 +14,13 @@ import { cn } from "@/lib/utils";
 
 export function MainSidebar() {
   const isMobile = useIsMobile();
-  const { step, setStep } = useNetworkFinderStore();
+  const { step, setStep, resetStore } = useNetworkFinderStore();
   const { selectedSearch, clearSelectedSearch } = useHistoryStore();
   const { selectedTab, setSelectedTab } = useTabStore();
 
   const handleNewSearch = () => {
     clearSelectedSearch();
+    resetStore();
     setStep("input");
   };
 

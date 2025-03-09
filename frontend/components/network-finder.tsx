@@ -219,18 +219,30 @@ export default function NetworkFinder() {
               // Take only the first 3 results
               .slice(0, 15);
 
-            // Wait a moment to show the filtering process
-            setTimeout(() => {
-              setResults(processedResults);
-              setStep("results");
+            // Set results and target person first
+            setResults(processedResults);
+            setStep("results");
 
-              // Add to history
-              addSearch({
-                query: url.trim(),
-                type: "person",
-                result: processedResults,
-              });
-            }, 1500);
+            // Add to history after state is updated
+            const name =
+              profileData?.firstName || url.split("/").pop() || "Sam Taylor";
+            const company =
+              profileData?.position[0]?.companyName || "Acme Corporation";
+            const avatar =
+              profileData?.profilePicture ||
+              "/placeholder.svg?height=60&width=60";
+
+            // Add to history with the actual values
+            addSearch({
+              query: url.trim(),
+              type: "person",
+              result: processedResults,
+              targetPerson: {
+                name,
+                company,
+                avatar,
+              },
+            });
           }
         } catch (error) {
           console.error("Error filtering connections:", error);
@@ -582,16 +594,6 @@ export default function NetworkFinder() {
                       )}
                     >
                       <div className='flex items-center gap-4'>
-                        <Avatar className='h-14 w-14 shadow-sm'>
-                          <AvatarImage
-                            src={contact.avatar}
-                            alt={contact.name}
-                          />
-                          <AvatarFallback className='bg-gray-100'>
-                            {contact.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-
                         <div className='flex-1 min-w-0'>
                           <div className='flex items-center justify-start gap-2'>
                             <h3 className='font-medium text-lg text-black'>
