@@ -19,7 +19,8 @@ import Image from "next/image";
 
 const LinkedInSection = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
-  const { linkedinId, isAuthenticated } = useLinkedinProfileStore();
+  const { linkedinId, isAuthenticated, linkedinUrl } =
+    useLinkedinProfileStore();
 
   const handleOpen = useCallback(() => {
     setIsOpen(true);
@@ -51,11 +52,35 @@ const LinkedInSection = memo(() => {
           </Button>
         </>
       ) : (
-        <div className="space-y-2">
-          <div className="text-sm">
-            <p>LinkedIn conectado</p>
-            <p className="text-muted-foreground">Puedes enviar mensajes</p>
+        <div className="relative bg-white rounded-xl overflow-hidden border border-gray-200 p-4 pr-12 flex flex-col items-center text-center">
+          <div className="absolute top-4 right-4 flex items-center">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
           </div>
+
+          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-6 w-6 text-blue-600"
+            >
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+              <rect x="2" y="9" width="4" height="12"></rect>
+              <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+          </div>
+
+          <p className="text-xs text-gray-500 mt-1">You are connected as</p>
+          <p className="text-xs font-semibold text-blue-600 mt-1">
+            {linkedinUrl}
+          </p>
         </div>
       )}
       <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />

@@ -41,7 +41,6 @@ export function LinkedInProfileForm() {
           response.data.message || "Error al obtener el ID de LinkedIn"
         );
       }
-      debugger;
       const linkedinId = response.data.data.urn;
 
       if (!linkedinId) {
