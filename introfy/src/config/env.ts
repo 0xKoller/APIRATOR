@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default {
-  PORT: process.env.PORT || 3000,
+  PORT: process.env.PORT || 3001,
   REAL_TIME_LINKEDIN_SCRAPER_API_KEY:
     process.env.REAL_TIME_LINKEDIN_SCRAPER_API_KEY,
 };

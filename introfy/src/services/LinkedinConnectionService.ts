@@ -140,7 +140,7 @@ class LinkedinConnectionService {
       if (interactionsData.data && interactionsData.data.items) {
         for (const item of interactionsData.data.items) {
           // Check if this is an interaction with Luciano Trujillo
-          if (item.action && item.action.includes("Luciano Trujillo")) {
+          if (item.action) {
             const authorUrl = item.author?.url;
 
             if (authorUrl && connectionMap.has(authorUrl)) {
