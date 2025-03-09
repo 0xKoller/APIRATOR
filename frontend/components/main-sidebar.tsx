@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus, Search } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,75 +11,107 @@ import { useNetworkFinderStore } from "@/store/network-finder-store";
 import { useHistoryStore } from "@/store/history";
 import { useTabStore } from "@/store/tab-store";
 import { cn } from "@/lib/utils";
+import { memo, useMemo } from "react";
 
-export function MainSidebar() {
-  const isMobile = useIsMobile();
-  const { step, setStep, resetStore } = useNetworkFinderStore();
-  const { selectedSearch, clearSelectedSearch } = useHistoryStore();
+const SidebarContent = memo(() => (
+  <div className='h-full py-6'>
+    <div className='flex flex-col h-full space-y-4'>
+      <div className='px-3'>
+        <h2 className='mb-4 px-4 text-lg font-semibold'>Introfy</h2>
+        <TabsSection />
+      </div>
+    </div>
+  </div>
+));
+SidebarContent.displayName = "SidebarContent";
+
+const TabsSection = memo(() => {
   const { selectedTab, setSelectedTab } = useTabStore();
 
-  const handleNewSearch = () => {
-    clearSelectedSearch();
-    resetStore();
-    setStep("input");
-  };
+  return (
+    <Tabs
+      value={selectedTab}
+      onValueChange={(value) => setSelectedTab(value as "person" | "icp")}
+      className='w-full'
+    >
+      <TabsList className='grid w-full grid-cols-2 mb-4'>
+        <TabsTrigger value='person'>Person</TabsTrigger>
+        <TabsTrigger value='icp'>ICP</TabsTrigger>
+      </TabsList>
+      <TabsContent value='person'>
+        <PersonTabContent />
+      </TabsContent>
+      <TabsContent value='icp'>
+        <IcpTabContent />
+      </TabsContent>
+    </Tabs>
+  );
+});
+TabsSection.displayName = "TabsSection";
 
-  const SidebarContent = () => (
-    <div className='h-full py-6'>
-      <div className='flex flex-col h-full space-y-4'>
-        <div className='px-3'>
-          <h2 className='mb-4 px-4 text-lg font-semibold'>APIRATOR</h2>
-          <Tabs
-            value={selectedTab}
-            onValueChange={(value) => setSelectedTab(value as "person" | "icp")}
-            className='w-full'
-          >
-            <TabsList className='grid w-full grid-cols-2 mb-4'>
-              <TabsTrigger value='person'>Person</TabsTrigger>
-              <TabsTrigger value='icp'>ICP</TabsTrigger>
-            </TabsList>
-            <TabsContent value='person'>
-              <div className='space-y-4'>
-                <div className='space-y-1'>
-                  <Button
-                    variant='ghost'
-                    className={cn(
-                      "w-full justify-start",
-                      step === "input" && !selectedSearch && "bg-accent"
-                    )}
-                    onClick={handleNewSearch}
-                  >
-                    <Plus className='mr-2 h-4 w-4' />
-                    New Search
-                  </Button>
-                </div>
-                <Separator />
-                <div className='px-1'>
-                  <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
-                  <HistoryList type='person' />
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent value='icp'>
-              <div className='space-y-4'>
-                <div className='space-y-1'>
-                  <Button variant='ghost' className='w-full justify-start'>
-                    <Plus className='mr-2 h-4 w-4' />
-                    New Search
-                  </Button>
-                </div>
-                <Separator />
-                <div className='px-1'>
-                  <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
-                  <HistoryList type='icp' />
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+const PersonTabContent = memo(() => {
+  const { step } = useNetworkFinderStore();
+  const { selectedSearch } = useHistoryStore();
+  const handleNewSearch = useNewSearchCallback();
+
+  return (
+    <div className='space-y-4'>
+      <div className='space-y-1'>
+        <Button
+          variant='ghost'
+          className={cn(
+            "w-full justify-start",
+            step === "input" && !selectedSearch && "bg-accent"
+          )}
+          onClick={handleNewSearch}
+        >
+          <Plus className='mr-2 h-4 w-4' />
+          New Search
+        </Button>
+      </div>
+      <Separator />
+      <div className='px-1'>
+        <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
+        <HistoryList type='person' />
       </div>
     </div>
   );
+});
+PersonTabContent.displayName = "PersonTabContent";
+
+const IcpTabContent = memo(() => (
+  <div className='space-y-4'>
+    <div className='space-y-1'>
+      <Button variant='ghost' className='w-full justify-start'>
+        <Plus className='mr-2 h-4 w-4' />
+        New Search
+      </Button>
+    </div>
+    <Separator />
+    <div className='px-1'>
+      <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
+      <HistoryList type='icp' />
+    </div>
+  </div>
+));
+IcpTabContent.displayName = "IcpTabContent";
+
+const useNewSearchCallback = () => {
+  const { setStep, resetStore } = useNetworkFinderStore();
+  const { clearSelectedSearch } = useHistoryStore();
+
+  return useMemo(
+    () => () => {
+      clearSelectedSearch();
+      resetStore();
+      setStep("input");
+    },
+    [clearSelectedSearch, resetStore, setStep]
+  );
+};
+
+export function MainSidebar() {
+  const isMobile = useIsMobile();
 
   if (!isMobile) {
     return (
