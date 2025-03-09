@@ -1,7 +1,13 @@
 "use client";
 import axios from "axios";
 import type React from "react";
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import type {
   UnipileAccount,
   UnipileAccountCreated,
@@ -9,6 +15,7 @@ import type {
   UnipileAuthState,
   UnipileCheckpoint,
 } from "@/types/unipile";
+import { useLinkedinProfileStore } from "@/store/linkedin-profile-store";
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -34,60 +41,101 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     linkedinId: undefined,
   });
 
+  const { linkedinId, setUnipileAccountId, setLinkedinId, setIsAuthenticated } =
+    useLinkedinProfileStore();
+
   console.log("state unipile auth", state);
 
   const [checkpointData, setCheckpointData] =
     useState<UnipileCheckpoint | null>(null);
   const [lastCheckedId, setLastCheckedId] = useState<string | null>(null);
 
-  const findMatchingAccount = async (linkedinId: string): Promise<void> => {
-    if (lastCheckedId === linkedinId) {
-      return;
-    }
+  const findMatchingAccount = useCallback(
+    async (explicitLinkedinId?: string): Promise<void> => {
+      const idToCheck = explicitLinkedinId || linkedinId;
 
-    try {
-      setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
-      const response = await axios.get<{ items: UnipileAccount[] }>(
-        "/api/messaging/accounts"
-      );
-      setLastCheckedId(linkedinId);
-
-      const accounts = response.data.items;
-      const matchingAccount = accounts.find(
-        (account) => account.connection_params?.im?.id === linkedinId
-      );
-
-      if (matchingAccount) {
-        setState((prev) => ({
-          ...prev,
-          accountId: matchingAccount.id,
-          linkedinId,
-          isAuthenticated: true,
-          isLoading: false,
-          error: undefined,
-        }));
+      if (!idToCheck) {
+        console.log("No LinkedIn ID available to check for matching accounts");
         return;
       }
 
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        accountId: undefined,
-        linkedinId: undefined,
-        isAuthenticated: false,
-        error: "No se encontró una cuenta de LinkedIn conectada",
-      }));
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-        accountId: undefined,
-        linkedinId: undefined,
-        isAuthenticated: false,
-        error: "Error al buscar cuenta conectada",
-      }));
+      if (lastCheckedId === idToCheck) {
+        return;
+      }
+
+      try {
+        setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
+        const response = await axios.get<{ items: UnipileAccount[] }>(
+          "/api/unipile/accounts"
+        );
+        debugger;
+        setLastCheckedId(idToCheck);
+        const accounts = response.data.items;
+        const matchingAccount = accounts.find(
+          (account) => account.connection_params?.im?.id === idToCheck
+        );
+
+        if (matchingAccount) {
+          setState((prev) => ({
+            ...prev,
+            accountId: matchingAccount.id,
+            linkedinId: idToCheck,
+            isAuthenticated: true,
+            isLoading: false,
+            error: undefined,
+          }));
+
+          // Update the Zustand store
+          setUnipileAccountId(matchingAccount.id);
+          setLinkedinId(idToCheck);
+          setIsAuthenticated(true);
+
+          return;
+        }
+
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          accountId: undefined,
+          linkedinId: undefined,
+          isAuthenticated: false,
+          error: "No se encontró una cuenta de LinkedIn conectada",
+        }));
+
+        // Update the Zustand store
+        setUnipileAccountId(null);
+        setIsAuthenticated(false);
+      } catch (err) {
+        console.error("Error finding matching account:", err);
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          accountId: undefined,
+          linkedinId: undefined,
+          isAuthenticated: false,
+          error: "Error al buscar cuenta conectada",
+        }));
+
+        // Update the Zustand store
+        setUnipileAccountId(null);
+        setIsAuthenticated(false);
+      }
+    },
+    [
+      linkedinId,
+      lastCheckedId,
+      setUnipileAccountId,
+      setLinkedinId,
+      setIsAuthenticated,
+    ]
+  );
+
+  // Effect to automatically check for matching account when linkedinId changes
+  useEffect(() => {
+    if (linkedinId && linkedinId !== lastCheckedId) {
+      findMatchingAccount();
     }
-  };
+  }, [linkedinId, lastCheckedId, findMatchingAccount]);
 
   const connectAccount = async (credentials: {
     username: string;
@@ -120,7 +168,8 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (account.connection_params?.im?.id) {
         await findMatchingAccount(account.connection_params.im.id);
       }
-    } catch (error) {
+    } catch (err) {
+      console.error("Error connecting account:", err);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -173,7 +222,8 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
         await findMatchingAccount(account.connection_params.im.id);
       }
       setCheckpointData(null);
-    } catch (error) {
+    } catch (err) {
+      console.error("Error handling checkpoint:", err);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -186,8 +236,16 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setState({
       isAuthenticated: false,
       isLoading: false,
+      accountId: undefined,
+      linkedinId: undefined,
     });
     setCheckpointData(null);
+    setLastCheckedId(null);
+
+    // Update the Zustand store
+    setUnipileAccountId(null);
+    setLinkedinId(null);
+    setIsAuthenticated(false);
   };
 
   const generateAuthUrl = async (): Promise<string> => {
@@ -196,7 +254,7 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await axios.post<{ url: string }>(
         "/api/unipile/auth-url",
         {
-          userId: state.accountId || state.linkedinId || "new-user",
+          userId: state.accountId || linkedinId || "new-user",
         }
       );
       setState((prev) => ({ ...prev, isLoading: false }));

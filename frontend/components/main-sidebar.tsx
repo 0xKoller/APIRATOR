@@ -13,10 +13,12 @@ import { useTabStore } from "@/store/tab-store";
 import { cn } from "@/lib/utils";
 import { memo, useCallback, useMemo, useState } from "react";
 import { LinkedInConnectDialog } from "./linkedin-connect-dialog";
-import { UnipileAuthProvider } from "@/client/src/contexts/unipile-auth.context";
+import { LinkedInProfileForm } from "./linkedin-profile-form";
+import { useLinkedinProfileStore } from "@/store/linkedin-profile-store";
 
 const LinkedInSection = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
+  const { linkedinId, isAuthenticated } = useLinkedinProfileStore();
 
   const handleOpen = useCallback(() => {
     setIsOpen(true);
@@ -26,15 +28,37 @@ const LinkedInSection = memo(() => {
     setIsOpen(false);
   }, []);
 
+  console.log("linkedinId store", linkedinId);
+
   return (
-    <UnipileAuthProvider>
-      <div className="px-3">
-        <Button variant="outline" className="w-full" onClick={handleOpen}>
-          Connect LinkedIn
-        </Button>
-        <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />
-      </div>
-    </UnipileAuthProvider>
+    <div className="px-3 space-y-4">
+      {!linkedinId ? (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium">Conecta tu perfil de LinkedIn</h3>
+          <LinkedInProfileForm />
+        </div>
+      ) : !isAuthenticated ? (
+        <>
+          <div className="text-sm">
+            <p>Perfil de LinkedIn verificado</p>
+            <p className="text-muted-foreground">
+              Conecta tu cuenta para enviar mensajes
+            </p>
+          </div>
+          <Button variant="outline" className="w-full" onClick={handleOpen}>
+            Conectar LinkedIn
+          </Button>
+        </>
+      ) : (
+        <div className="space-y-2">
+          <div className="text-sm">
+            <p>LinkedIn conectado</p>
+            <p className="text-muted-foreground">Puedes enviar mensajes</p>
+          </div>
+        </div>
+      )}
+      <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />
+    </div>
   );
 });
 LinkedInSection.displayName = "LinkedInSection";

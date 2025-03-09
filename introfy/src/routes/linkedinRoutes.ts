@@ -185,4 +185,40 @@ router.get("/user-interactions", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @route POST /api/linkedin/get-profile-id
+ * @desc Get LinkedIn profile ID from URL
+ * @access Public
+ * @param {string} profileUrl - LinkedIn profile URL
+ */
+router.post("/get-profile-id", async (req: Request, res: Response) => {
+  try {
+    const { profileUrl } = req.body;
+
+    if (!profileUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile URL is required",
+      });
+    }
+
+    const linkedinProfileService = getLinkedinProfileService();
+    const profile = await linkedinProfileService.getProfileByUrl(profileUrl);
+
+    // The LinkedIn ID is available in the profile object
+    return res.status(200).json({
+      success: true,
+      id: profile.urn?.split(":").pop() || null, // Extract ID from URN
+      name: `${profile.firstName} ${profile.lastName}`,
+    });
+  } catch (error) {
+    console.error("Error fetching LinkedIn profile ID:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
+  }
+});
+
 export default router;

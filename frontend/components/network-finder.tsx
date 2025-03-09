@@ -299,16 +299,16 @@ export default function NetworkFinder() {
   };
 
   return (
-    <div className='relative space-y-6' onMouseMove={handleMouseMove}>
+    <div className="relative space-y-6" onMouseMove={handleMouseMove}>
       {/* Interactive background particles */}
       <div
         ref={particlesRef}
-        className='absolute inset-0 -z-10 overflow-hidden pointer-events-none'
+        className="absolute inset-0 -z-10 overflow-hidden pointer-events-none"
       />
 
       {/* Subtle background effects */}
       <div
-        className='absolute -inset-40 bg-indigo-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10'
+        className="absolute -inset-40 bg-indigo-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10"
         style={{
           top: "30%",
           left: "20%",
@@ -316,7 +316,7 @@ export default function NetworkFinder() {
         }}
       />
       <div
-        className='absolute -inset-40 bg-sky-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10'
+        className="absolute -inset-40 bg-sky-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10"
         style={{
           top: "60%",
           right: "10%",
@@ -325,67 +325,67 @@ export default function NetworkFinder() {
         }}
       />
 
-      <AnimatePresence mode='wait'>
+      <AnimatePresence mode="wait">
         {step === "upload" && (
           <motion.div
-            key='upload'
+            key="upload"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
+            className="max-w-2xl mx-auto p-8 rounded-2xl shadow-sm"
           >
-            <div className='space-y-8 text-center'>
+            <div className="space-y-8 text-center">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className='space-y-2'
+                className="space-y-2"
               >
-                <h2 className='text-2xl font-semibold text-gray-900'>
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Import your connections
                 </h2>
-                <p className='text-gray-500 text-sm'>
+                <p className="text-gray-500 text-sm">
                   Upload a CSV file with your network connections or use our
                   example data
                 </p>
               </motion.div>
 
               <motion.div
-                className='space-y-6'
+                className="space-y-6"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className='flex flex-col items-center gap-4'>
+                <div className="flex flex-col items-center gap-4">
                   <label
-                    htmlFor='csv-upload'
-                    className='w-full max-w-md h-32 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50/50 transition-all cursor-pointer'
+                    htmlFor="csv-upload"
+                    className="w-full max-w-md h-32 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50/50 transition-all cursor-pointer"
                   >
                     <input
-                      id='csv-upload'
-                      type='file'
-                      accept='.csv'
+                      id="csv-upload"
+                      type="file"
+                      accept=".csv"
                       onChange={handleFileUpload}
-                      className='hidden'
+                      className="hidden"
                     />
-                    <ArrowUp className='h-6 w-6 text-gray-400 mb-2' />
-                    <span className='text-sm text-gray-500'>
+                    <ArrowUp className="h-6 w-6 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-500">
                       {csvFile
                         ? csvFile.name
                         : "Drop your CSV file here or click to browse"}
                     </span>
                   </label>
 
-                  <div className='flex items-center gap-4'>
-                    <div className='h-px w-16 bg-gray-200' />
-                    <span className='text-sm text-gray-500'>or</span>
-                    <div className='h-px w-16 bg-gray-200' />
+                  <div className="flex items-center gap-4">
+                    <div className="h-px w-16 bg-gray-200" />
+                    <span className="text-sm text-gray-500">or</span>
+                    <div className="h-px w-16 bg-gray-200" />
                   </div>
 
                   <Button
                     onClick={handleUseExample}
-                    className='bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-all'
+                    className="bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-all"
                   >
                     Use example CSV
                   </Button>
@@ -397,48 +397,48 @@ export default function NetworkFinder() {
 
         {step === "input" && (
           <motion.div
-            key='input'
+            key="input"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
+            className="max-w-2xl mx-auto p-8 rounded-2xl shadow-sm"
           >
-            <form onSubmit={handleSubmit} className='space-y-8 text-center'>
+            <form onSubmit={handleSubmit} className="space-y-8 text-center">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className='space-y-2'
+                className="space-y-2"
               >
-                <h2 className='text-2xl font-semibold text-gray-900'>
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Find your next connection
                 </h2>
-                <p className='text-gray-500 text-sm'>
+                <p className="text-gray-500 text-sm">
                   Enter a LinkedIn profile to discover optimal paths in your
                   network
                 </p>
               </motion.div>
 
               <motion.div
-                className='space-y-4'
+                className="space-y-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className='relative'>
+                <div className="relative">
                   <Input
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder='https://linkedin.com/in/connanbat'
-                    className='py-6 pr-14 rounded-xl text-gray-900 placeholder:text-gray-500 focus-visible:ring-indigo-500 shadow-sm'
+                    placeholder="https://linkedin.com/in/connanbat"
+                    className="py-6 pr-14 rounded-xl text-gray-900 placeholder:text-gray-500 focus-visible:ring-indigo-500 shadow-sm"
                   />
                   <Button
-                    type='submit'
+                    type="submit"
                     disabled={!url}
-                    className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white h-10 w-10 rounded-full p-0 flex items-center justify-center shadow-sm transition-all'
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white h-10 w-10 rounded-full p-0 flex items-center justify-center shadow-sm transition-all"
                   >
-                    <ArrowUp className='h-5 w-5' />
+                    <ArrowUp className="h-5 w-5" />
                   </Button>
                 </div>
               </motion.div>
@@ -448,19 +448,19 @@ export default function NetworkFinder() {
 
         {step === "searching" && (
           <motion.div
-            key='searching'
+            key="searching"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-6 rounded-xl'
+            className="max-w-2xl mx-auto p-6 rounded-xl"
           >
-            <div className='space-y-6'>
-              <div className='space-y-2 text-center'>
-                <h2 className='text-xl font-semibold text-gray-900'>
+            <div className="space-y-6">
+              <div className="space-y-2 text-center">
+                <h2 className="text-xl font-semibold text-gray-900">
                   Analyzing your network
                 </h2>
-                <AnimatePresence mode='wait'>
+                <AnimatePresence mode="wait">
                   {[
                     "Initializing search...",
                     "Fetching profile data...",
@@ -470,7 +470,7 @@ export default function NetworkFinder() {
                   ].map((text, i) => (
                     <motion.p
                       key={text}
-                      className='text-gray-600 text-sm'
+                      className="text-gray-600 text-sm"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -485,27 +485,27 @@ export default function NetworkFinder() {
                 </AnimatePresence>
               </div>
 
-              <div className='flex items-center justify-center py-16'>
-                <motion.div className='relative'>
+              <div className="flex items-center justify-center py-16">
+                <motion.div className="relative">
                   {targetPerson.name ? (
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <Avatar className='h-24 w-24 shadow-md'>
+                      <Avatar className="h-24 w-24 shadow-md">
                         <AvatarImage
                           src={targetPerson.avatar}
                           alt={targetPerson.name}
                         />
-                        <AvatarFallback className='bg-gray-100 text-indigo-600'>
+                        <AvatarFallback className="bg-gray-100 text-indigo-600">
                           {targetPerson.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                     </motion.div>
                   ) : (
-                    <div className='h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center'>
-                      <Users className='h-12 w-12 text-gray-400' />
+                    <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Users className="h-12 w-12 text-gray-400" />
                     </div>
                   )}
 
@@ -513,7 +513,7 @@ export default function NetworkFinder() {
                   {[...Array(3)].map((_, i) => (
                     <motion.div
                       key={i}
-                      className='absolute rounded-full'
+                      className="absolute rounded-full"
                       style={{ inset: `-${(i + 1) * 20}px` }}
                       initial={{ opacity: 0.3, scale: 0.8 }}
                       animate={{
@@ -533,7 +533,7 @@ export default function NetworkFinder() {
                   {[...Array(12)].map((_, i) => (
                     <motion.div
                       key={`particle-${i}`}
-                      className='absolute w-2 h-2 rounded-full bg-sky-400'
+                      className="absolute w-2 h-2 rounded-full bg-sky-400"
                       style={{
                         left: "50%",
                         top: "50%",
@@ -568,14 +568,14 @@ export default function NetworkFinder() {
 
         {step === "results" && (
           <motion.div
-            key='results'
+            key="results"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto'
+            className="max-w-2xl mx-auto"
           >
-            <div className='space-y-4'>
+            <div className="space-y-4">
               {results.slice(0, 10).map((contact, index) => {
                 const totalInteractions = contact.interactionCount;
                 return (
@@ -593,10 +593,10 @@ export default function NetworkFinder() {
                           : ""
                       )}
                     >
-                      <div className='flex items-center gap-4'>
-                        <div className='flex-1 min-w-0'>
-                          <div className='flex items-center justify-start gap-2'>
-                            <h3 className='font-medium text-lg text-black'>
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-start gap-2">
+                            <h3 className="font-medium text-lg text-black">
                               {contact.name}
                             </h3>
                             <div
@@ -611,13 +611,13 @@ export default function NetworkFinder() {
                             </div>
                           </div>
 
-                          <p className='text-gray-600 text-sm mt-1'>
+                          <p className="text-gray-600 text-sm mt-1">
                             {contact.role}
                           </p>
 
-                          <div className='flex items-center justify-between mt-3'>
-                            <div className='flex items-center gap-2'>
-                              <span className='text-sm text-gray-500 flex items-center'>
+                          <div className="flex items-center justify-between mt-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-gray-500 flex items-center">
                                 <Users
                                   className={cn(
                                     "h-4 w-4 mr-1",
@@ -639,7 +639,7 @@ export default function NetworkFinder() {
                                   : "bg-black hover:bg-gray-800 text-white"
                               )}
                             >
-                              <MessageCircle className='h-4 w-4 mr-1' />
+                              <MessageCircle className="h-4 w-4 mr-1" />
                               Ask for intro
                             </Button>
                           </div>
@@ -658,7 +658,7 @@ export default function NetworkFinder() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'
+                  className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
                   onClick={() => setShowIntroModal(false)}
                 >
                   <motion.div
@@ -666,49 +666,49 @@ export default function NetworkFinder() {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", damping: 25 }}
-                    className='bg-white rounded-xl shadow-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto'
+                    className="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className='flex justify-between items-center mb-4'>
-                      <h3 className='text-xl font-semibold text-black'>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-black">
                         Request Introduction
                       </h3>
                       <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8 rounded-full text-black hover:bg-gray-100'
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-full text-black hover:bg-gray-100"
                         onClick={() => setShowIntroModal(false)}
                       >
-                        <X className='h-4 w-4' />
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    <div className='flex justify-center items-center gap-4 mb-6'>
-                      <div className='text-center'>
-                        <Avatar className='h-16 w-16 mx-auto mb-2'>
-                          <AvatarFallback className='bg-amber-100 text-amber-800'>
+                    <div className="flex justify-center items-center gap-4 mb-6">
+                      <div className="text-center">
+                        <Avatar className="h-16 w-16 mx-auto mb-2">
+                          <AvatarFallback className="bg-amber-100 text-amber-800">
                             You
                           </AvatarFallback>
                         </Avatar>
-                        <p className='text-sm text-gray-600'>You</p>
+                        <p className="text-sm text-gray-600">You</p>
                       </div>
 
-                      <div className='flex flex-col items-center'>
-                        <ArrowRight className='h-5 w-5 text-gray-400 mb-1' />
-                        <div className='h-0.5 w-12 bg-gray-200'></div>
+                      <div className="flex flex-col items-center">
+                        <ArrowRight className="h-5 w-5 text-gray-400 mb-1" />
+                        <div className="h-0.5 w-12 bg-gray-200"></div>
                       </div>
 
-                      <div className='text-center'>
-                        <Avatar className='h-16 w-16 mx-auto mb-2'>
+                      <div className="text-center">
+                        <Avatar className="h-16 w-16 mx-auto mb-2">
                           <AvatarImage
                             src={selectedContact.avatar}
                             alt={selectedContact.name}
                           />
-                          <AvatarFallback className='bg-gray-100'>
+                          <AvatarFallback className="bg-gray-100">
                             {selectedContact.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
-                        <p className='text-sm text-gray-600'>
+                        <p className="text-sm text-gray-600">
                           {selectedContact.name}
                         </p>
                         {/* <p className='text-xs text-gray-500 mt-1'>
@@ -716,52 +716,52 @@ export default function NetworkFinder() {
                         </p> */}
                       </div>
 
-                      <div className='flex flex-col items-center'>
-                        <ArrowRight className='h-5 w-5 text-gray-400 mb-1' />
-                        <div className='h-0.5 w-12 bg-gray-200'></div>
+                      <div className="flex flex-col items-center">
+                        <ArrowRight className="h-5 w-5 text-gray-400 mb-1" />
+                        <div className="h-0.5 w-12 bg-gray-200"></div>
                       </div>
 
-                      <div className='text-center'>
-                        <Avatar className='h-16 w-16 mx-auto mb-2'>
+                      <div className="text-center">
+                        <Avatar className="h-16 w-16 mx-auto mb-2">
                           <AvatarImage
                             src={targetPerson.avatar}
                             alt={targetPerson.name}
                           />
-                          <AvatarFallback className='bg-gray-100'>
+                          <AvatarFallback className="bg-gray-100">
                             {targetPerson.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
-                        <p className='text-sm text-gray-600'>
+                        <p className="text-sm text-gray-600">
                           {targetPerson.name}
                         </p>
                       </div>
                     </div>
 
-                    <div className='mb-6'>
-                      <h4 className='text-sm font-medium text-gray-700 mb-3'>
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">
                         Last interaction
                       </h4>
-                      <div className='space-y-3'>
+                      <div className="space-y-3">
                         {selectedContact &&
                           selectedContact.recentInteractions
                             ?.slice(0, 3)
                             .map((interaction, index) => (
                               <div
                                 key={index}
-                                className='bg-gray-50 p-4 rounded-lg space-y-2'
+                                className="bg-gray-50 p-4 rounded-lg space-y-2"
                               >
-                                <div className='flex items-start justify-between'>
-                                  <div className='space-y-1'>
-                                    <p className='text-sm font-medium text-gray-900'>
+                                <div className="flex items-start justify-between">
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-gray-900">
                                       {interaction.interactions[0].action}
                                     </p>
                                     {interaction.interactions[0].text && (
-                                      <p className='text-sm text-gray-600 line-clamp-2'>
+                                      <p className="text-sm text-gray-600 line-clamp-2">
                                         {interaction.interactions[0].text}
                                       </p>
                                     )}
                                   </div>
-                                  <span className='text-xs text-gray-500'>
+                                  <span className="text-xs text-gray-500">
                                     {interaction.interactions[0].postedAt}
                                   </span>
                                 </div>
@@ -770,28 +770,28 @@ export default function NetworkFinder() {
                       </div>
                     </div>
 
-                    <div className='mb-6'>
-                      <h4 className='text-sm font-medium text-gray-700 mb-2'>
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">
                         Your Message
                       </h4>
                       <Textarea
                         value={introMessage}
                         onChange={(e) => setIntroMessage(e.target.value)}
-                        className='min-h-[120px] text-sm border-gray-200 focus-visible:ring-amber-500'
-                        placeholder='Write your introduction request...'
+                        className="min-h-[120px] text-sm border-gray-200 focus-visible:ring-amber-500"
+                        placeholder="Write your introduction request..."
                       />
                     </div>
 
-                    <div className='flex justify-end gap-2'>
+                    <div className="flex justify-end gap-2">
                       <Button
-                        variant='outline'
+                        variant="outline"
                         onClick={() => setShowIntroModal(false)}
-                        className='border-gray-200 text-black hover:bg-gray-50'
+                        className="border-gray-200 text-black hover:bg-gray-50"
                       >
                         Cancel
                       </Button>
                       <Button
-                        className='bg-amber-500 hover:bg-amber-600 text-white'
+                        className="bg-amber-500 hover:bg-amber-600 text-white"
                         onClick={handleSendIntro}
                       >
                         Send Request
