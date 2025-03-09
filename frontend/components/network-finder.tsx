@@ -285,10 +285,32 @@ export default function NetworkFinder() {
     setShowIntroModal(true);
   };
 
-  const handleSendIntro = () => {
+  const handleSendIntro = async () => {
     // In a real app, this would send the introduction request
     // For now, we'll just close the modal
-    setShowIntroModal(false);
+    // git backend endpoint for sending message:
+    try {
+      debugger;
+
+      const profilePrivateId = (
+        await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/linkedin/profile?url=${selectedContact?.recentInteractions[0]?.interactions[0]?.author.url}`
+        )
+      ).data.data.urn;
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/unipile/message`,
+        {
+          recipientId: profilePrivateId,
+          message: introMessage,
+          accountId: unipileAccountId,
+        }
+      );
+
+      setShowIntroModal(false);
+    } catch (error) {
+      console.error("Error sending intro:", error);
+    }
 
     // Show a success message or notification here
   };
@@ -824,7 +846,7 @@ export default function NetworkFinder() {
                         className="bg-amber-500 hover:bg-amber-600 text-white"
                         onClick={handleSendIntro}
                       >
-                        Send Request
+                        Send Message
                       </Button>
                     </div>
                   </motion.div>

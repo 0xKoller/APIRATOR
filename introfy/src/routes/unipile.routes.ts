@@ -63,23 +63,13 @@ router.post("/checkpoint", async (req: Request, res: Response) => {
 });
 
 // Send a message
-router.post("/messages", async (req: Request, res: Response) => {
+router.post("/message", async (req: Request, res: Response) => {
   try {
-    const { recipientId, message, accountId, userId, organizationId } =
-      req.body;
+    const { recipientId, message, accountId } = req.body;
 
     if (!recipientId || !message || !accountId) {
       return res.status(400).json({
         error: "recipientId, message y accountId son requeridos",
-      });
-    }
-
-    console.log(userId, "User ID");
-    console.log(organizationId, "Organization ID");
-
-    if (!userId || !organizationId) {
-      return res.status(401).json({
-        error: "Usuario no autenticado",
       });
     }
 
@@ -88,8 +78,6 @@ router.post("/messages", async (req: Request, res: Response) => {
       accountId,
       recipientId,
       message,
-      userId,
-      organizationId,
     });
 
     return res.json({

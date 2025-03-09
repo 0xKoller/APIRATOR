@@ -5,8 +5,6 @@ export interface SendMessageParams {
   accountId: string;
   recipientId: string;
   message: string;
-  userId: string;
-  organizationId: string;
 }
 
 export interface MessageResult {
