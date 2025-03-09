@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import { z } from "zod";
+import config from "../config/env";
 
 // LinkedIn Profile Schemas and Types
 export const LinkedinProfileResponseSchema = z.object({
@@ -218,8 +219,7 @@ axiosRetry(axios, {
 
 export class LinkedinProfileService {
   private API_HOST = "linkedin-data-api.p.rapidapi.com";
-  private API_KEY: string =
-    "ec52a7d13amshbc928b013488027p17ca42jsn59464802b8a2";
+  private API_KEY: string = config.REAL_TIME_LINKEDIN_SCRAPER_API_KEY || "";
 
   constructor() {
     this.validateApiKey();
@@ -491,5 +491,12 @@ export class LinkedinProfileService {
   }
 }
 
-// Export a singleton instance for easy use
-export const linkedinProfileService = new LinkedinProfileService();
+// Instead of creating the instance immediately, export a function to get or create it
+let linkedinProfileServiceInstance: LinkedinProfileService | null = null;
+
+export function getLinkedinProfileService(): LinkedinProfileService {
+  if (!linkedinProfileServiceInstance) {
+    linkedinProfileServiceInstance = new LinkedinProfileService();
+  }
+  return linkedinProfileServiceInstance;
+}

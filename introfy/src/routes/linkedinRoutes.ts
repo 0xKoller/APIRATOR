@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { linkedinProfileService } from "../services/LinkedinProfileService";
+import { getLinkedinProfileService } from "../services/LinkedinProfileService";
 import { linkedinConnectionService } from "../services/LinkedinConnectionService";
 
 const router = express.Router();
@@ -21,6 +21,7 @@ router.get("/profile", async (req: Request, res: Response) => {
       });
     }
 
+    const linkedinProfileService = getLinkedinProfileService();
     const profile = await linkedinProfileService.getProfileByUrl(profileUrl);
 
     return res.status(200).json({
@@ -54,6 +55,7 @@ router.get("/post/interactors", async (req: Request, res: Response) => {
       });
     }
 
+    const linkedinProfileService = getLinkedinProfileService();
     const interactors = await linkedinProfileService.getPostInteractors(
       postUrn
     );
@@ -123,6 +125,7 @@ router.get("/profile-likes", async (req: Request, res: Response) => {
       });
     }
 
+    const linkedinProfileService = getLinkedinProfileService();
     const profileLikes = await linkedinProfileService.getProfileLikes(
       username,
       start

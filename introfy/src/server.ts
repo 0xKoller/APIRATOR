@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
+import config from "./config/env";
 import linkedinRoutes from "./routes/linkedinRoutes";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.PORT;
 
 // Middleware
 app.use(cors());
