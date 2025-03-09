@@ -2,7 +2,14 @@
 
 import React, { useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue } from "framer-motion";
-import { ArrowUp, Users, MessageCircle, ArrowRight, X } from "lucide-react";
+import {
+  ArrowUp,
+  Users,
+  MessageCircle,
+  ArrowRight,
+  X,
+  Search,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,6 +22,7 @@ import {
   LinkedInInteraction,
 } from "@/store/network-finder-store";
 import { useHistoryStore } from "@/store/history";
+import { useLinkedinProfileStore } from "@/store/linkedin-profile-store";
 
 // Mock data for contacts
 const mockContacts: Contact[] = [
@@ -95,6 +103,8 @@ export default function NetworkFinder() {
   // History store
   const { addSearch } = useHistoryStore();
 
+  const { unipileAccountId } = useLinkedinProfileStore();
+
   // Update mouse position for interactive effects
   const handleMouseMove = (e: React.MouseEvent) => {
     mouseX.set(e.clientX);
@@ -155,7 +165,6 @@ export default function NetworkFinder() {
       if (response.data.success) {
         const profileData = response.data.data;
         setSearchingStep(2); // Profile found
-        debugger;
         // Extract name from profile data or fallback to URL
         const name =
           profileData?.firstName || url.split("/").pop() || "Sam Taylor";
@@ -167,7 +176,6 @@ export default function NetworkFinder() {
             profileData?.profilePicture ||
             "/placeholder.svg?height=60&width=60",
         });
-        debugger;
         // Make second API call to filter connections
         try {
           setSearchingStep(3); // Analyzing connections
@@ -177,6 +185,7 @@ export default function NetworkFinder() {
               params: {
                 profileId: response.data.data.id,
                 url: url,
+                unipileAccountId: unipileAccountId,
               },
             }
           );
@@ -326,7 +335,7 @@ export default function NetworkFinder() {
       />
 
       <AnimatePresence mode="wait">
-        {step === "upload" && (
+        {/* {step === "upload" && (
           <motion.div
             key="upload"
             initial={{ opacity: 0, y: 20 }}
@@ -393,7 +402,7 @@ export default function NetworkFinder() {
               </motion.div>
             </div>
           </motion.div>
-        )}
+        )} */}
 
         {step === "input" && (
           <motion.div
@@ -575,81 +584,102 @@ export default function NetworkFinder() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className="max-w-2xl mx-auto"
           >
-            <div className="space-y-4">
-              {results.slice(0, 10).map((contact, index) => {
-                const totalInteractions = contact.interactionCount;
-                return (
-                  <motion.div
-                    key={contact.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.15 }}
-                  >
-                    <div
-                      className={cn(
-                        "p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all",
-                        index === 0
-                          ? "bg-gradient-to-r from-amber-50 to-white border-l-4 border-amber-500"
-                          : ""
-                      )}
+            {results.length === 0 ? (
+              <div className="text-center py-8 space-y-4">
+                <div className="inline-flex h-20 w-20 rounded-full bg-gray-100 items-center justify-center mx-auto">
+                  <Search className="h-10 w-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900">
+                  No results found
+                </h3>
+                <p className="text-gray-500 max-w-md mx-auto">
+                  We couldn&apos;t find any connections with the information
+                  provided. Try adjusting your search criteria.
+                </p>
+                <Button
+                  onClick={() => setStep("input")}
+                  className="mt-2 bg-black hover:bg-gray-800 text-white"
+                >
+                  Try again
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {results.slice(0, 10).map((contact, index) => {
+                  const totalInteractions = contact.interactionCount;
+                  return (
+                    <motion.div
+                      key={contact.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.15 }}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-start gap-2">
-                            <h3 className="font-medium text-lg text-black">
-                              {contact.name}
-                            </h3>
-                            <div
-                              className={cn(
-                                "px-3 py-1 rounded-full text-sm font-medium",
-                                index === 0
-                                  ? "bg-amber-100 text-amber-800"
-                                  : "bg-gray-100 text-gray-800"
-                              )}
-                            >
-                              {index + 1}° priority
-                            </div>
-                          </div>
-
-                          <p className="text-gray-600 text-sm mt-1">
-                            {contact.role}
-                          </p>
-
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-500 flex items-center">
-                                <Users
-                                  className={cn(
-                                    "h-4 w-4 mr-1",
-                                    index === 0
-                                      ? "text-amber-500"
-                                      : "text-gray-400"
-                                  )}
-                                />
-                                {`${totalInteractions} interactions with ${targetPerson.name}`}
-                              </span>
+                      <div
+                        className={cn(
+                          "p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all",
+                          index === 0
+                            ? "bg-gradient-to-r from-amber-50 to-white border-l-4 border-amber-500"
+                            : ""
+                        )}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-start gap-2">
+                              <h3 className="font-medium text-lg text-black">
+                                {contact.name}
+                              </h3>
+                              <div
+                                className={cn(
+                                  "px-3 py-1 rounded-full text-sm font-medium",
+                                  index === 0
+                                    ? "bg-amber-100 text-amber-800"
+                                    : "bg-gray-100 text-gray-800"
+                                )}
+                              >
+                                {index + 1}° priority
+                              </div>
                             </div>
 
-                            <Button
-                              onClick={() => handleAskForIntro(contact)}
-                              className={cn(
-                                "flex items-center gap-1",
-                                index === 0
-                                  ? "bg-amber-500 hover:bg-amber-600 text-white"
-                                  : "bg-black hover:bg-gray-800 text-white"
-                              )}
-                            >
-                              <MessageCircle className="h-4 w-4 mr-1" />
-                              Ask for intro
-                            </Button>
+                            <p className="text-gray-600 text-sm mt-1">
+                              {contact.role}
+                            </p>
+
+                            <div className="flex items-center justify-between mt-3">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500 flex items-center">
+                                  <Users
+                                    className={cn(
+                                      "h-4 w-4 mr-1",
+                                      index === 0
+                                        ? "text-amber-500"
+                                        : "text-gray-400"
+                                    )}
+                                  />
+                                  {`${totalInteractions} interactions with ${targetPerson.name}`}
+                                </span>
+                              </div>
+
+                              <Button
+                                onClick={() => handleAskForIntro(contact)}
+                                className={cn(
+                                  "flex items-center gap-1",
+                                  index === 0
+                                    ? "bg-amber-500 hover:bg-amber-600 text-white"
+                                    : "bg-black hover:bg-gray-800 text-white"
+                                )}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-1" />
+                                Ask for intro
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Introduction Modal */}
             <AnimatePresence>

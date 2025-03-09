@@ -110,10 +110,10 @@ export default function IcpFinder() {
   };
 
   return (
-    <div className='relative space-y-6'>
+    <div className="relative space-y-6">
       {/* Subtle background effects */}
       <div
-        className='absolute -inset-40 bg-blue-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10'
+        className="absolute -inset-40 bg-blue-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10"
         style={{
           top: "30%",
           left: "20%",
@@ -121,7 +121,7 @@ export default function IcpFinder() {
         }}
       />
       <div
-        className='absolute -inset-40 bg-indigo-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10'
+        className="absolute -inset-40 bg-indigo-50 rounded-full blur-3xl opacity-30 animate-pulse -z-10"
         style={{
           top: "60%",
           right: "10%",
@@ -130,57 +130,57 @@ export default function IcpFinder() {
         }}
       />
 
-      <AnimatePresence mode='wait'>
+      <AnimatePresence mode="wait">
         {step === "upload" && (
           <motion.div
-            key='upload'
+            key="upload"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
+            className="max-w-2xl mx-auto p-8 rounded-2xl shadow-sm"
           >
-            <div className='space-y-8 text-center'>
+            <div className="space-y-8 text-center">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className='space-y-2'
+                className="space-y-2"
               >
-                <h2 className='text-2xl font-semibold text-gray-900'>
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Import your customer data
                 </h2>
-                <p className='text-gray-500 text-sm'>
+                <p className="text-gray-500 text-sm">
                   Upload a CSV file with your customer data or use our example
                   data
                 </p>
               </motion.div>
 
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 <input
-                  type='file'
-                  accept='.csv'
+                  type="file"
+                  accept=".csv"
                   onChange={handleFileUpload}
-                  className='hidden'
-                  id='csv-upload'
+                  className="hidden"
+                  id="csv-upload"
                 />
-                <div className='grid gap-4'>
+                <div className="grid gap-4">
                   <Button
-                    variant='outline'
+                    variant="outline"
                     onClick={() =>
                       document.getElementById("csv-upload")?.click()
                     }
-                    className='h-24 rounded-xl border-dashed'
+                    className="h-24 rounded-xl border-dashed"
                   >
-                    <div className='flex flex-col items-center justify-center'>
-                      <Building2 className='h-8 w-8 mb-2 text-gray-400' />
-                      <span className='text-sm text-gray-600'>Upload CSV</span>
+                    <div className="flex flex-col items-center justify-center">
+                      <Building2 className="h-8 w-8 mb-2 text-gray-400" />
+                      <span className="text-sm text-gray-600">Upload CSV</span>
                     </div>
                   </Button>
                   <Button
-                    variant='ghost'
+                    variant="ghost"
                     onClick={() => setStep("input")}
-                    className='text-sm text-gray-500'
+                    className="text-sm text-gray-500"
                   >
                     Use example data
                   </Button>
@@ -192,48 +192,48 @@ export default function IcpFinder() {
 
         {step === "input" && (
           <motion.div
-            key='input'
+            key="input"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
+            className="max-w-2xl mx-auto p-8 rounded-2xl shadow-sm"
           >
-            <form onSubmit={handleSubmit} className='space-y-8 text-center'>
+            <form onSubmit={handleSubmit} className="space-y-8 text-center">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className='space-y-2'
+                className="space-y-2"
               >
-                <h2 className='text-2xl font-semibold text-gray-900'>
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Find your Ideal Customer Profile
                 </h2>
-                <p className='text-gray-500 text-sm'>
+                <p className="text-gray-500 text-sm">
                   Enter your target market characteristics to discover matching
                   profiles
                 </p>
               </motion.div>
 
               <motion.div
-                className='space-y-4'
+                className="space-y-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className='relative'>
+                <div className="relative">
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder='e.g., B2B SaaS companies in California with 50-200 employees'
-                    className='py-6 pr-14 rounded-xl text-gray-900 placeholder:text-gray-500 focus-visible:ring-indigo-500 shadow-sm'
+                    placeholder="e.g., B2B SaaS companies in California with 50-200 employees"
+                    className="py-6 pr-14 rounded-xl text-gray-900 placeholder:text-gray-500 focus-visible:ring-indigo-500 shadow-sm"
                   />
                   <Button
-                    type='submit'
+                    type="submit"
                     disabled={!searchQuery}
-                    className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white h-10 w-10 rounded-full p-0 flex items-center justify-center shadow-sm transition-all'
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-700 text-white h-10 w-10 rounded-full p-0 flex items-center justify-center shadow-sm transition-all"
                   >
-                    <ArrowUp className='h-5 w-5' />
+                    <ArrowUp className="h-5 w-5" />
                   </Button>
                 </div>
               </motion.div>
@@ -243,19 +243,19 @@ export default function IcpFinder() {
 
         {step === "searching" && (
           <motion.div
-            key='searching'
+            key="searching"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto p-6 rounded-xl'
+            className="max-w-2xl mx-auto p-6 rounded-xl"
           >
-            <div className='space-y-6'>
-              <div className='space-y-2 text-center'>
-                <h2 className='text-xl font-semibold text-gray-900'>
+            <div className="space-y-6">
+              <div className="space-y-2 text-center">
+                <h2 className="text-xl font-semibold text-gray-900">
                   Analyzing customer profiles
                 </h2>
-                <AnimatePresence mode='wait'>
+                <AnimatePresence mode="wait">
                   {[
                     "Initializing analysis...",
                     "Fetching company profiles...",
@@ -265,7 +265,7 @@ export default function IcpFinder() {
                   ].map((text, i) => (
                     <motion.p
                       key={text}
-                      className='text-gray-600 text-sm'
+                      className="text-gray-600 text-sm"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -280,17 +280,17 @@ export default function IcpFinder() {
                 </AnimatePresence>
               </div>
 
-              <div className='flex items-center justify-center py-16'>
-                <motion.div className='relative'>
-                  <div className='h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center'>
-                    <Building2 className='h-12 w-12 text-gray-400' />
+              <div className="flex items-center justify-center py-16">
+                <motion.div className="relative">
+                  <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Building2 className="h-12 w-12 text-gray-400" />
                   </div>
 
                   {/* Animated rings */}
                   {[...Array(3)].map((_, i) => (
                     <motion.div
                       key={i}
-                      className='absolute rounded-full'
+                      className="absolute rounded-full"
                       style={{ inset: `-${(i + 1) * 20}px` }}
                       initial={{ opacity: 0.3, scale: 0.8 }}
                       animate={{
@@ -313,14 +313,14 @@ export default function IcpFinder() {
 
         {step === "results" && (
           <motion.div
-            key='results'
+            key="results"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-            className='max-w-2xl mx-auto'
+            className="max-w-2xl mx-auto"
           >
-            <div className='space-y-4'>
+            <div className="space-y-4">
               {results.map((profile, index) => (
                 <motion.div
                   key={profile.id}
@@ -336,18 +336,18 @@ export default function IcpFinder() {
                         : ""
                     )}
                   >
-                    <div className='flex items-start gap-4'>
-                      <div className='h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0'>
-                        <Building2 className='h-6 w-6 text-blue-600' />
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <Building2 className="h-6 w-6 text-blue-600" />
                       </div>
 
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-center justify-between gap-2'>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
                           <div>
-                            <h3 className='font-medium text-lg text-black'>
+                            <h3 className="font-medium text-lg text-black">
                               {profile.name}
                             </h3>
-                            <p className='text-gray-600 text-sm mt-1'>
+                            <p className="text-gray-600 text-sm mt-1">
                               {profile.industry} • {profile.size} •{" "}
                               {profile.location}
                             </p>
@@ -364,11 +364,11 @@ export default function IcpFinder() {
                           </div>
                         </div>
 
-                        <div className='mt-3'>
-                          <p className='text-gray-700 text-sm'>
+                        <div className="mt-3">
+                          <p className="text-gray-700 text-sm">
                             {profile.description}
                           </p>
-                          <p className='text-gray-500 text-sm mt-2'>
+                          <p className="text-gray-500 text-sm mt-2">
                             {profile.reason}
                           </p>
                         </div>

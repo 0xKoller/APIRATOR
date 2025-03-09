@@ -16,6 +16,20 @@ export interface MessageResult {
   error?: string;
 }
 
+export interface UnipileConnection {
+  profile_picture_url?: string | undefined;
+  object: "UserRelation";
+  created_at: number;
+  public_identifier: string;
+  headline: string;
+  first_name: string;
+  last_name: string;
+  public_profile_url: string;
+  member_urn: string;
+  member_id: string;
+  connection_urn: string;
+}
+
 export interface MessagingProvider {
   getConnectedAccounts(): Promise<UnipileAccount[]>;
   connectAccount(credentials: {
@@ -376,6 +390,21 @@ export class UnipileProvider implements MessagingProvider {
         "[UnipileProvider] Error generando enlace de autenticación"
       );
       throw new Error("Error al generar enlace de autenticación en Unipile");
+    }
+  }
+
+  async getConnections(accountId: string): Promise<UnipileConnection[]> {
+    try {
+      const client = await this.ensureClient();
+      console.log(accountId, "[UnipileProvider] Obteniendo conexiones");
+      const response = await client.users.getAllRelations({
+        account_id: accountId,
+        limit: 10,
+      });
+      return response.items;
+    } catch (error) {
+      console.error(error, "[UnipileProvider] Error obteniendo conexiones");
+      throw new Error("Error al obtener conexiones en Unipile");
     }
   }
 }

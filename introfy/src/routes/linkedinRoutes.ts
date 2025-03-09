@@ -165,7 +165,8 @@ router.get("/user-interactions", async (req: Request, res: Response) => {
   try {
     const userInteractions =
       await linkedinConnectionService.getUserInteractions(
-        (req.query.url as string).split("/in/")[1].replace("/", "")
+        (req.query.url as string).split("/in/")[1].replace("/", ""),
+        req.query.unipileAccountId as string
       );
 
     return res.status(200).json({

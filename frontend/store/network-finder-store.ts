@@ -74,7 +74,7 @@ interface NetworkFinderStore {
 }
 
 const initialState = {
-  step: "upload" as Step,
+  step: "input" as Step,
   url: "",
   csvFile: null,
   targetPerson: {

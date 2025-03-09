@@ -2,6 +2,10 @@ import * as fs from "fs";
 import * as path from "path";
 import { parse } from "csv-parse/sync";
 import { LinkedinProfileService } from "./LinkedinProfileService";
+import {
+  getUnipileProvider,
+  UnipileConnection,
+} from "./unipileProviderService";
 
 export interface LinkedinConnection {
   "First Name": string;
@@ -110,11 +114,14 @@ class LinkedinConnectionService {
    * @returns Array of users with their interactions and interaction counts
    */
   public async getUserInteractions(
-    username: string
+    username: string,
+    unipileAccountId: string
   ): Promise<UserInteraction[]> {
     try {
       // Get all connections from CSV
-      const connections = await this.getAllConnections();
+      const connections = await (
+        await getUnipileProvider()
+      ).getConnections(unipileAccountId);
 
       // Read interactions file
       const linkedinProfileService = new LinkedinProfileService();
@@ -125,9 +132,9 @@ class LinkedinConnectionService {
       const interactionsData = interactionsContent;
 
       // Create a map of URL to connections for faster lookup
-      const connectionMap = new Map<string, LinkedinConnection>();
+      const connectionMap = new Map<string, UnipileConnection>();
       for (const connection of connections) {
-        connectionMap.set(connection.URL, connection);
+        connectionMap.set(connection.public_profile_url, connection);
       }
 
       // Track interactions per user

@@ -52,7 +52,6 @@ export default function NetworkGraph(props: NetworkGraphProps) {
     };
   }, []);
 
-  debugger;
   if (has3DError) {
     return <NetworkGraph2D {...props} />;
   }
