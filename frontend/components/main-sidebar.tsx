@@ -2,23 +2,21 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, Search, History, BookmarkIcon, Settings } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HistoryList } from "./history-list";
 import { useNetworkFinderStore } from "@/store/network-finder-store";
 import { useHistoryStore } from "@/store/history";
+import { useTabStore } from "@/store/tab-store";
 import { cn } from "@/lib/utils";
 
-interface MainSidebarProps {
-  className?: string;
-}
-
-export function MainSidebar({ className }: MainSidebarProps) {
+export function MainSidebar() {
   const isMobile = useIsMobile();
   const { step, setStep } = useNetworkFinderStore();
   const { selectedSearch, clearSelectedSearch } = useHistoryStore();
+  const { selectedTab, setSelectedTab } = useTabStore();
 
   const handleNewSearch = () => {
     clearSelectedSearch();
@@ -30,7 +28,11 @@ export function MainSidebar({ className }: MainSidebarProps) {
       <div className='flex flex-col h-full space-y-4'>
         <div className='px-3'>
           <h2 className='mb-4 px-4 text-lg font-semibold'>APIRATOR</h2>
-          <Tabs defaultValue='person' className='w-full'>
+          <Tabs
+            value={selectedTab}
+            onValueChange={(value) => setSelectedTab(value as "person" | "icp")}
+            className='w-full'
+          >
             <TabsList className='grid w-full grid-cols-2 mb-4'>
               <TabsTrigger value='person'>Person</TabsTrigger>
               <TabsTrigger value='icp'>ICP</TabsTrigger>

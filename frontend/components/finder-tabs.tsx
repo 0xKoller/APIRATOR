@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NetworkFinder from "@/components/network-finder";
+import IcpFinder from "@/components/icp-finder";
 
 export function FinderTabs() {
   return (
@@ -14,12 +15,7 @@ export function FinderTabs() {
         <NetworkFinder />
       </TabsContent>
       <TabsContent value='icp' className='mt-6'>
-        <div className='rounded-lg border p-8 text-center'>
-          <h2 className='text-2xl font-semibold mb-2'>Find ICP</h2>
-          <p className='text-muted-foreground'>
-            This feature is coming soon. Stay tuned!
-          </p>
-        </div>
+        <IcpFinder />
       </TabsContent>
     </Tabs>
   );
