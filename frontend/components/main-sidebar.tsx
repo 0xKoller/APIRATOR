@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, Search } from "lucide-react";
+import { Menu, Plus, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,7 +48,7 @@ export function MainSidebar() {
                     )}
                     onClick={handleNewSearch}
                   >
-                    <Search className='mr-2 h-4 w-4' />
+                    <Plus className='mr-2 h-4 w-4' />
                     New Search
                   </Button>
                 </div>
@@ -63,8 +63,8 @@ export function MainSidebar() {
               <div className='space-y-4'>
                 <div className='space-y-1'>
                   <Button variant='ghost' className='w-full justify-start'>
-                    <Search className='mr-2 h-4 w-4' />
-                    Search ICP
+                    <Plus className='mr-2 h-4 w-4' />
+                    New Search
                   </Button>
                 </div>
                 <Separator />
@@ -95,7 +95,7 @@ export function MainSidebar() {
           <Menu className='h-6 w-6' />
         </Button>
       </SheetTrigger>
-      <SheetContent side='left' className='w-[250px] p-0'>
+      <SheetContent side='left' className='w-[350px] p-0'>
         <SidebarContent />
       </SheetContent>
     </Sheet>

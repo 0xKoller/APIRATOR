@@ -323,10 +323,6 @@ export default function NetworkFinder() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
           >
-            <div className='mb-12'>
-              <h1 className='text-2xl font-bold text-indigo-600'>Introfy</h1>
-            </div>
-
             <div className='space-y-8 text-center'>
               <motion.div
                 initial={{ opacity: 0 }}
@@ -396,10 +392,6 @@ export default function NetworkFinder() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className='max-w-2xl mx-auto p-8 rounded-2xl shadow-sm'
           >
-            <div className='mb-12'>
-              <h1 className='text-2xl font-bold text-indigo-600'>Introfy</h1>
-            </div>
-
             <form onSubmit={handleSubmit} className='space-y-8 text-center'>
               <motion.div
                 initial={{ opacity: 0 }}

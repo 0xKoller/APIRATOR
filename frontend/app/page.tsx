@@ -9,7 +9,7 @@ export default function Home() {
   const { selectedTab } = useTabStore();
 
   return (
-    <div className='flex min-h-screen'>
+    <div className='flex min-h-screen w-full'>
       <MainSidebar />
       <main className='flex-1 bg-gray-50 text-gray-800 p-4 md:p-8 overflow-hidden'>
         {selectedTab === "person" ? <NetworkFinder /> : <IcpFinder />}
