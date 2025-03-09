@@ -44,7 +44,7 @@ export const LinkedInConnectDialog = ({
         setAuthUrl(null);
       }
     };
-  }, [isOpen, fetchAuthUrl, authUrl]);
+  }, [isOpen]);
 
   const handleConnect = () => {
     if (authUrl) {
@@ -54,12 +54,12 @@ export const LinkedInConnectDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Conectar LinkedIn</DialogTitle>
           <DialogDescription>
             {error ? (
-              <span className='text-red-500'>{error}</span>
+              <span className="text-red-500">{error}</span>
             ) : (
               "Haz clic en el botón para conectar tu cuenta de LinkedIn de forma segura."
             )}
@@ -67,7 +67,7 @@ export const LinkedInConnectDialog = ({
         </DialogHeader>
 
         <DialogFooter>
-          <Button type='button' variant='outline' onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={handleConnect} disabled={isLoading || !authUrl}>

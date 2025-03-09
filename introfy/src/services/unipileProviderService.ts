@@ -361,8 +361,8 @@ export class UnipileProvider implements MessagingProvider {
         expiresOn: expiresOn.toISOString(),
         name: userId,
         notify_url: `${process.env.SERVER_PUBLIC_URL}/api/unipile/callback`,
-        success_redirect_url: `${process.env.CLIENT_URL}/lead-lens`,
-        failure_redirect_url: `${process.env.CLIENT_URL}/lead-lens`,
+        success_redirect_url: `${process.env.CLIENT_URL}`,
+        failure_redirect_url: `${process.env.CLIENT_URL}`,
       })) as UnipileHostedAuthURL;
 
       console.log(

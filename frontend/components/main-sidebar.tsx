@@ -13,6 +13,7 @@ import { useTabStore } from "@/store/tab-store";
 import { cn } from "@/lib/utils";
 import { memo, useCallback, useMemo, useState } from "react";
 import { LinkedInConnectDialog } from "./linkedin-connect-dialog";
+import { UnipileAuthProvider } from "@/client/src/contexts/unipile-auth.context";
 
 const LinkedInSection = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,21 +27,23 @@ const LinkedInSection = memo(() => {
   }, []);
 
   return (
-    <div className='px-3'>
-      <Button variant='outline' className='w-full' onClick={handleOpen}>
-        Connect LinkedIn
-      </Button>
-      <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />
-    </div>
+    <UnipileAuthProvider>
+      <div className="px-3">
+        <Button variant="outline" className="w-full" onClick={handleOpen}>
+          Connect LinkedIn
+        </Button>
+        <LinkedInConnectDialog isOpen={isOpen} onClose={handleClose} />
+      </div>
+    </UnipileAuthProvider>
   );
 });
 LinkedInSection.displayName = "LinkedInSection";
 
 const SidebarContent = memo(() => (
-  <div className='h-full py-6'>
-    <div className='flex flex-col h-full space-y-4'>
-      <div className='px-3'>
-        <h2 className='mb-4 px-4 text-lg font-semibold'>Introfy</h2>
+  <div className="h-full py-6">
+    <div className="flex flex-col h-full space-y-4">
+      <div className="px-3">
+        <h2 className="mb-4 px-4 text-lg font-semibold">Introfy</h2>
         <TabsSection />
       </div>
       <Separator />
@@ -57,16 +60,16 @@ const TabsSection = memo(() => {
     <Tabs
       value={selectedTab}
       onValueChange={(value) => setSelectedTab(value as "person" | "icp")}
-      className='w-full'
+      className="w-full"
     >
-      <TabsList className='grid w-full grid-cols-2 mb-4'>
-        <TabsTrigger value='person'>Person</TabsTrigger>
-        <TabsTrigger value='icp'>ICP</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="person">Person</TabsTrigger>
+        <TabsTrigger value="icp">ICP</TabsTrigger>
       </TabsList>
-      <TabsContent value='person'>
+      <TabsContent value="person">
         <PersonTabContent />
       </TabsContent>
-      <TabsContent value='icp'>
+      <TabsContent value="icp">
         <IcpTabContent />
       </TabsContent>
     </Tabs>
@@ -80,24 +83,24 @@ const PersonTabContent = memo(() => {
   const handleNewSearch = useNewSearchCallback();
 
   return (
-    <div className='space-y-4'>
-      <div className='space-y-1'>
+    <div className="space-y-4">
+      <div className="space-y-1">
         <Button
-          variant='ghost'
+          variant="ghost"
           className={cn(
             "w-full justify-start",
             step === "input" && !selectedSearch && "bg-accent"
           )}
           onClick={handleNewSearch}
         >
-          <Plus className='mr-2 h-4 w-4' />
+          <Plus className="mr-2 h-4 w-4" />
           New Search
         </Button>
       </div>
       <Separator />
-      <div className='px-1'>
-        <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
-        <HistoryList type='person' />
+      <div className="px-1">
+        <h3 className="mb-2 text-sm font-medium">Recent Searches</h3>
+        <HistoryList type="person" />
       </div>
     </div>
   );
@@ -105,17 +108,17 @@ const PersonTabContent = memo(() => {
 PersonTabContent.displayName = "PersonTabContent";
 
 const IcpTabContent = memo(() => (
-  <div className='space-y-4'>
-    <div className='space-y-1'>
-      <Button variant='ghost' className='w-full justify-start'>
-        <Plus className='mr-2 h-4 w-4' />
+  <div className="space-y-4">
+    <div className="space-y-1">
+      <Button variant="ghost" className="w-full justify-start">
+        <Plus className="mr-2 h-4 w-4" />
         New Search
       </Button>
     </div>
     <Separator />
-    <div className='px-1'>
-      <h3 className='mb-2 text-sm font-medium'>Recent Searches</h3>
-      <HistoryList type='icp' />
+    <div className="px-1">
+      <h3 className="mb-2 text-sm font-medium">Recent Searches</h3>
+      <HistoryList type="icp" />
     </div>
   </div>
 ));
@@ -140,7 +143,7 @@ export function MainSidebar() {
 
   if (!isMobile) {
     return (
-      <div className='hidden lg:block w-[250px] border-r bg-background h-screen'>
+      <div className="hidden lg:block w-[250px] border-r bg-background h-screen">
         <SidebarContent />
       </div>
     );
@@ -149,11 +152,11 @@ export function MainSidebar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant='ghost' size='icon' className='lg:hidden'>
-          <Menu className='h-6 w-6' />
+        <Button variant="ghost" size="icon" className="lg:hidden">
+          <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side='left' className='w-[350px] p-0'>
+      <SheetContent side="left" className="w-[350px] p-0">
         <SidebarContent />
       </SheetContent>
     </Sheet>

@@ -33,6 +33,9 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     accountId: undefined,
     linkedinId: undefined,
   });
+
+  console.log("state unipile auth", state);
+
   const [checkpointData, setCheckpointData] =
     useState<UnipileCheckpoint | null>(null);
   const [lastCheckedId, setLastCheckedId] = useState<string | null>(null);
