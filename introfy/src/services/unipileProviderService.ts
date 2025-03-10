@@ -50,6 +50,7 @@ export interface MessagingProvider {
   >;
   sendMessage(params: SendMessageParams): Promise<MessageResult>;
   generateHostedAuthLink(userId: string): Promise<string>;
+  searchLinkedInProfiles(accountId: string, searchUrl: string): Promise<any[]>;
 }
 
 type UTCDateTimeMs = number;
@@ -403,6 +404,59 @@ export class UnipileProvider implements MessagingProvider {
     } catch (error) {
       console.error(error, "[UnipileProvider] Error obteniendo conexiones");
       throw new Error("Error al obtener conexiones en Unipile");
+    }
+  }
+
+  /**
+   * Search LinkedIn profiles using a LinkedIn search URL
+   * @param accountId The account ID to use for the search
+   * @param searchUrl The LinkedIn search URL
+   * @returns Array of LinkedIn profiles matching the search criteria
+   */
+  async searchLinkedInProfiles(
+    accountId: string,
+    searchUrl: string
+  ): Promise<any[]> {
+    try {
+      console.log(
+        `[UnipileProvider] Searching LinkedIn profiles with URL: ${searchUrl}`,
+        "UnipileProvider.searchLinkedInProfiles"
+      );
+
+      // Make the LinkedIn search request using the raw API endpoint
+      // The Unipile SDK might not have a dedicated method for this, so we'll use a more generic approach
+      const response: any = await fetch(
+        `https://api6.unipile.com:13648/api/v1/linkedin/search?account_id=${accountId}`,
+        {
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            "content-type": "application/json",
+            "X-API-KEY": process.env.UNIPILE_API_KEY || "",
+          },
+          body: JSON.stringify({
+            api: "classic",
+            category: "people",
+            url: searchUrl,
+          }),
+        }
+      ).then((res) => res.json());
+
+      console.log(
+        `[UnipileProvider] Found ${
+          response.items?.length || 0
+        } LinkedIn profiles`,
+        "UnipileProvider.searchLinkedInProfiles"
+      );
+
+      return response.items || [];
+    } catch (error) {
+      console.error(
+        { error },
+        "[UnipileProvider] Error searching LinkedIn profiles",
+        "UnipileProvider.searchLinkedInProfiles"
+      );
+      throw new Error("Error searching LinkedIn profiles");
     }
   }
 }

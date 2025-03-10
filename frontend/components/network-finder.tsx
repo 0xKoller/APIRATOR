@@ -290,8 +290,6 @@ export default function NetworkFinder() {
     // For now, we'll just close the modal
     // git backend endpoint for sending message:
     try {
-      debugger;
-
       const profilePrivateId = (
         await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/api/linkedin/profile?url=${selectedContact?.recentInteractions[0]?.interactions[0]?.author.url}`

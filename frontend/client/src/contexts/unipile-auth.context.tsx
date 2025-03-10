@@ -68,7 +68,6 @@ export const UnipileAuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const response = await axios.get<{ items: UnipileAccount[] }>(
           "/api/unipile/accounts"
         );
-        debugger;
         setLastCheckedId(idToCheck);
         const accounts = response.data.items;
         const matchingAccount = accounts.find(

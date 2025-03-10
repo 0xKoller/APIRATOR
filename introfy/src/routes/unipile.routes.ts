@@ -156,4 +156,40 @@ router.post("/auth-link", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @route POST /api/unipile/linkedin/search
+ * @desc Search LinkedIn profiles using a LinkedIn search URL
+ * @access Public
+ */
+router.post("/linkedin/search", async (req: Request, res: Response) => {
+  try {
+    const { accountId, url } = req.body;
+
+    if (!accountId || !url) {
+      return res.status(400).json({
+        success: false,
+        message: "Account ID and LinkedIn search URL are required",
+      });
+    }
+
+    const unipileProvider = await getUnipileProvider();
+    const searchResults = await unipileProvider.searchLinkedInProfiles(
+      accountId,
+      url
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: searchResults,
+    });
+  } catch (error) {
+    console.error("Error searching LinkedIn profiles:", error);
+    res.status(500).json({
+      success: false,
+      message:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
+  }
+});
+
 export default router;

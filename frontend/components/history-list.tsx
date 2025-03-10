@@ -18,6 +18,7 @@ export function HistoryList({ type }: HistoryListProps) {
   console.log(searches);
   const handleSearchClick = (search: (typeof searches)[0]) => {
     selectSearch(search.id);
+    console.log(search);
     if (search.result) {
       setResults(search.result);
       if (search.targetPerson) {
@@ -29,48 +30,48 @@ export function HistoryList({ type }: HistoryListProps) {
 
   if (filteredSearches.length === 0) {
     return (
-      <div className='text-center py-4 text-muted-foreground text-sm'>
+      <div className="text-center py-4 text-muted-foreground text-sm">
         No search history yet
       </div>
     );
   }
 
   return (
-    <div className='space-y-2 max-h-[400px] overflow-y-auto pr-2'>
+    <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
       {filteredSearches.map((search) => (
         <div
           key={search.id}
-          className='flex flex-col p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer'
+          className="flex flex-col p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
           onClick={() => handleSearchClick(search)}
         >
-          <div className='flex items-center justify-between gap-2'>
-            <div className='flex items-center gap-2 min-w-0'>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               {search.targetPerson ? (
-                <Avatar className='h-8 w-8'>
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={search.targetPerson.avatar} />
                   <AvatarFallback>
-                    <User className='h-4 w-4' />
+                    <User className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
               ) : (
                 search.result &&
                 search.result[0] && (
-                  <Avatar className='h-8 w-8'>
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={search.result[0].avatar} />
                     <AvatarFallback>
-                      <User className='h-4 w-4' />
+                      <User className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
                 )
               )}
-              <div className='truncate'>
-                <p className='text-sm font-medium truncate'>
+              <div className="truncate">
+                <p className="text-sm font-medium truncate">
                   {search.targetPerson
                     ? search.targetPerson.name
-                    : search.result[0].name}
+                    : search.result?.[0]?.name}
                 </p>
-                <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                  <Clock className='h-3 w-3' />
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
                   {formatDistanceToNow(search.timestamp, { addSuffix: true })}
                   {/* {search.result && (
                     <>
@@ -83,15 +84,15 @@ export function HistoryList({ type }: HistoryListProps) {
               </div>
             </div>
             <Button
-              variant='ghost'
-              size='icon'
-              className='h-8 w-8 text-muted-foreground hover:text-foreground'
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
               onClick={(e) => {
                 e.stopPropagation();
                 removeSearch(search.id);
               }}
             >
-              <Trash2 className='h-4 w-4' />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>

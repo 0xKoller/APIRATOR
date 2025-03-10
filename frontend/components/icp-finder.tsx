@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ChevronRight, ExternalLink, Search } from "lucide-react";
+import {
+  User,
+  ChevronRight,
+  ExternalLink,
+  Search,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,8 +29,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { mockIcpProfiles } from "@/client/mock-icp-profiles";
 import { ZodError } from "zod";
+import axios from "axios";
+
+// Define interfaces for Unipile accounts
+interface UnipileAccount {
+  id: string;
+  name: string;
+  type: string;
+}
 
 export default function IcpFinder() {
   const {
@@ -43,6 +66,12 @@ export default function IcpFinder() {
   const { setSelectedTab } = useTabStore();
   const { setUrl } = useNetworkFinderStore();
 
+  // State for Unipile accounts
+  const [accounts, setAccounts] = useState<UnipileAccount[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("");
+  const [loadingAccounts, setLoadingAccounts] = useState<boolean>(false);
+  const [accountError, setAccountError] = useState<string>("");
+
   // Add searchingStep state
   const [searchingStep, setSearchingStep] = useState(0);
 
@@ -51,6 +80,40 @@ export default function IcpFinder() {
 
   // History store
   const { addSearch } = useHistoryStore();
+
+  // Fetch Unipile accounts when we enter the LinkedIn search step
+  useEffect(() => {
+    if (step === "linkedin-search") {
+      fetchUnipileAccounts();
+    }
+  }, [step]);
+
+  const fetchUnipileAccounts = async () => {
+    setLoadingAccounts(true);
+    setAccountError("");
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/unipile/accounts`
+      );
+      if (response.data && response.data.items) {
+        setAccounts(response.data.items);
+        if (response.data.items.length > 0) {
+          setSelectedAccountId(response.data.items[0].id);
+        }
+      } else {
+        setAccountError(
+          "No LinkedIn accounts found. Please connect an account first."
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+      setAccountError(
+        "Failed to fetch LinkedIn accounts. Please try again later."
+      );
+    } finally {
+      setLoadingAccounts(false);
+    }
+  };
 
   const handleIcpFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +142,7 @@ export default function IcpFinder() {
   const handleLinkedinSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!linkedinUrl) {
+    if (!linkedinUrl || !selectedAccountId) {
       return;
     }
 
@@ -87,26 +150,77 @@ export default function IcpFinder() {
     setStep("searching");
     setSearchingStep(0);
 
-    // Simulate API call with mock data
-    setSearchingStep(1); // Fetching profiles
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Simulate API call with mock data
+      setSearchingStep(1); // Fetching profiles
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    setSearchingStep(2); // Profiles found
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Make API call to search LinkedIn profiles
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/unipile/linkedin/search`,
+        {
+          accountId: selectedAccountId,
+          url: linkedinUrl,
+        }
+      );
 
-    setSearchingStep(3); // Analyzing matches
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+      setSearchingStep(2); // Profiles found
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    setSearchingStep(4); // Preparing results
-    setResults(mockIcpProfiles);
-    setStep("results");
+      setSearchingStep(3); // Analyzing matches
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log(response.data);
+      // Process search results
+      if (response.data) {
+        // Map API results to our IcpProfile format
+        // For now, we'll use mock matching scores and reasons
+        const mappedResults = response.data.data.map(
+          (profile: any, index: number) => {
+            const mockProfile = mockIcpProfiles[index % mockIcpProfiles.length];
+            return {
+              id: profile.member_id || profile.id || `profile-${index}`,
+              name: `${profile.name || ""}`,
+              avatar:
+                profile.profile_picture_url ||
+                "/placeholder.svg?height=40&width=40",
+              role: profile.keyword_match || "LinkedIn Member",
+              description: profile.headline || "",
+              location: profile.location || "",
+              skills: profile.skills?.join(", ") || "",
+              education: profile.education?.join(", ") || "",
+              languages: profile.languages?.join(", ") || "",
+              followerCount: profile.follower_count || 0,
+              averageInteractionPerPostCount: 0,
+              postsTopics: "",
+              networkDistance: profile.network_distance || "unknown",
+              sharedConnectionsCount: profile.shared_connections_count || 0,
+              matchScore: mockProfile.matchScore,
+              matchReason: mockProfile.matchReason,
+            };
+          }
+        );
 
-    // Add to history
-    addSearch({
-      type: "icp",
-      query: icpCriteria.name,
-      result: mockIcpProfiles,
-    });
+        setResults(mappedResults);
+      } else {
+        // If no results or error, use mock data as fallback
+        setResults(mockIcpProfiles);
+      }
+
+      setSearchingStep(4); // Preparing results
+      setStep("results");
+
+      // Add to history
+      addSearch({
+        type: "icp",
+        query: icpCriteria.name,
+        result: results,
+      });
+    } catch (error) {
+      console.error("Error searching LinkedIn profiles:", error);
+      // Fallback to mock data
+      setResults(mockIcpProfiles);
+      setStep("results");
+    }
   };
 
   const handleProfileClick = (profile: IcpProfile) => {
@@ -189,6 +303,21 @@ export default function IcpFinder() {
                         {errors["name"]}
                       </p>
                     )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="organization_icp_id">
+                      Organization ICP ID
+                    </Label>
+                    <Input
+                      id="organization_icp_id"
+                      value={icpCriteria.organization_icp_id || ""}
+                      onChange={(e) =>
+                        setIcpCriteria({ organization_icp_id: e.target.value })
+                      }
+                      placeholder="Optional identifier for your organization"
+                      className="mt-1 py-2 rounded-lg"
+                    />
                   </div>
 
                   <Accordion
@@ -463,7 +592,7 @@ export default function IcpFinder() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 text-sm">
                     <p className="flex items-start gap-2">
                       <ExternalLink className="h-5 w-5 flex-shrink-0 mt-0.5" />
@@ -478,19 +607,67 @@ export default function IcpFinder() {
                           LinkedIn People Search
                         </a>
                         , apply filters based on your ICP criteria, then copy
-                        the URL from your browser's address bar.
+                        the URL from your browser&apos;s address bar.
                       </span>
                     </p>
                   </div>
 
+                  <div>
+                    <Label htmlFor="linkedin-account">LinkedIn Account</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Select
+                        value={selectedAccountId}
+                        onValueChange={setSelectedAccountId}
+                        disabled={loadingAccounts || accounts.length === 0}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a LinkedIn account" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>LinkedIn Accounts</SelectLabel>
+                            {accounts.map((account) => (
+                              <SelectItem key={account.id} value={account.id}>
+                                {account.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={fetchUnipileAccounts}
+                        disabled={loadingAccounts}
+                      >
+                        <RefreshCw
+                          className={cn(
+                            "h-4 w-4",
+                            loadingAccounts && "animate-spin"
+                          )}
+                        />
+                      </Button>
+                    </div>
+                    {accountError && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {accountError}
+                      </p>
+                    )}
+                  </div>
+
                   <div className="relative">
-                    <Input
-                      value={linkedinUrl}
-                      onChange={(e) => setLinkedinUrl(e.target.value)}
-                      placeholder="https://www.linkedin.com/search/results/people/?keywords=..."
-                      className="py-3 pl-10 pr-4 rounded-lg text-gray-900"
-                    />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Label htmlFor="linkedin-url">LinkedIn Search URL</Label>
+                    <div className="relative mt-1">
+                      <Input
+                        id="linkedin-url"
+                        value={linkedinUrl}
+                        onChange={(e) => setLinkedinUrl(e.target.value)}
+                        placeholder="https://www.linkedin.com/search/results/people/?keywords=..."
+                        className="py-3 pl-10 pr-4 rounded-lg text-gray-900"
+                      />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    </div>
                   </div>
                 </div>
 
@@ -505,7 +682,9 @@ export default function IcpFinder() {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!linkedinUrl}
+                    disabled={
+                      !linkedinUrl || !selectedAccountId || loadingAccounts
+                    }
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-6"
                   >
                     Find Matching Profiles
