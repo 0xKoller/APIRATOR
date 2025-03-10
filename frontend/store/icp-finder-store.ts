@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { z } from "zod";
 
-type Step = "upload" | "input" | "searching" | "results";
+type Step = "upload" | "input" | "linkedin-search" | "searching" | "results";
 
 // Define Zod schema for targeting criteria
 export const targetingCriteriaSchema = z.object({
@@ -31,7 +31,6 @@ export interface IcpProfile {
   id: string;
   name: string;
   avatar: string;
-  organization_icp_id?: string;
   role: string;
   description?: string;
   location?: string;
@@ -49,12 +48,14 @@ interface IcpFinderStore {
   step: Step;
   searchQuery: string;
   csvFile: File | null;
+  linkedinUrl: string;
   results: IcpProfile[];
   selectedProfile: IcpProfile | null;
   icpCriteria: IcpProfileData;
   setStep: (step: Step) => void;
   setSearchQuery: (query: string) => void;
   setCsvFile: (file: File | null) => void;
+  setLinkedinUrl: (url: string) => void;
   setResults: (results: IcpProfile[]) => void;
   setSelectedProfile: (profile: IcpProfile | null) => void;
   setIcpCriteria: (criteria: Partial<IcpProfileData>) => void;
@@ -66,6 +67,7 @@ const initialState = {
   step: "input" as Step,
   searchQuery: "",
   csvFile: null,
+  linkedinUrl: "",
   results: [],
   selectedProfile: null,
   icpCriteria: {
@@ -91,6 +93,7 @@ export const useIcpFinderStore = create<IcpFinderStore>((set) => ({
   setStep: (step) => set({ step }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setCsvFile: (csvFile) => set({ csvFile }),
+  setLinkedinUrl: (linkedinUrl) => set({ linkedinUrl }),
   setResults: (results) => set({ results }),
   setSelectedProfile: (selectedProfile) => set({ selectedProfile }),
   setIcpCriteria: (criteria) =>

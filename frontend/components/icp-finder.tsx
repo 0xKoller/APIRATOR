@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ChevronRight } from "lucide-react";
+import { User, ChevronRight, ExternalLink, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,10 +31,12 @@ export default function IcpFinder() {
     step,
     results,
     icpCriteria,
+    linkedinUrl,
     setStep,
     setResults,
     setSelectedProfile,
     setIcpCriteria,
+    setLinkedinUrl,
     updateTargetingCriteria,
   } = useIcpFinderStore();
 
@@ -50,7 +52,7 @@ export default function IcpFinder() {
   // History store
   const { addSearch } = useHistoryStore();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleIcpFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -58,30 +60,8 @@ export default function IcpFinder() {
       icpProfileSchema.parse(icpCriteria);
       setErrors({});
 
-      // Move to searching step and reset searching step
-      setStep("searching");
-      setSearchingStep(0);
-
-      // Simulate API call with mock data
-      setSearchingStep(1); // Fetching profiles
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      setSearchingStep(2); // Profiles found
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setSearchingStep(3); // Analyzing matches
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      setSearchingStep(4); // Preparing results
-      setResults(mockIcpProfiles);
-      setStep("results");
-
-      // Add to history
-      addSearch({
-        type: "icp",
-        query: icpCriteria.name,
-        result: mockIcpProfiles,
-      });
+      // Move to LinkedIn search step
+      setStep("linkedin-search");
     } catch (error: unknown) {
       // Handle Zod validation errors
       if (error instanceof ZodError) {
@@ -94,6 +74,39 @@ export default function IcpFinder() {
       }
       console.error("Error:", error);
     }
+  };
+
+  const handleLinkedinSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!linkedinUrl) {
+      return;
+    }
+
+    // Move to searching step and reset searching step
+    setStep("searching");
+    setSearchingStep(0);
+
+    // Simulate API call with mock data
+    setSearchingStep(1); // Fetching profiles
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setSearchingStep(2); // Profiles found
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setSearchingStep(3); // Analyzing matches
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setSearchingStep(4); // Preparing results
+    setResults(mockIcpProfiles);
+    setStep("results");
+
+    // Add to history
+    addSearch({
+      type: "icp",
+      query: icpCriteria.name,
+      result: mockIcpProfiles,
+    });
   };
 
   const handleProfileClick = (profile: IcpProfile) => {
@@ -137,7 +150,7 @@ export default function IcpFinder() {
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
             className="max-w-4xl mx-auto p-8 rounded-2xl shadow-sm"
           >
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleIcpFormSubmit} className="space-y-8">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -180,6 +193,7 @@ export default function IcpFinder() {
 
                   <Accordion
                     type="single"
+                    collapsible
                     defaultValue="targeting-criteria"
                     className="w-full border rounded-lg"
                   >
@@ -410,6 +424,90 @@ export default function IcpFinder() {
                     type="submit"
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-6"
                   >
+                    Next: Enter LinkedIn Search URL
+                  </Button>
+                </div>
+              </motion.div>
+            </form>
+          </motion.div>
+        )}
+
+        {step === "linkedin-search" && (
+          <motion.div
+            key="linkedin-search"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+            className="max-w-2xl mx-auto p-8 rounded-2xl shadow-sm"
+          >
+            <form onSubmit={handleLinkedinSearchSubmit} className="space-y-8">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-2"
+              >
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Enter LinkedIn Search URL
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  Copy and paste the URL from your LinkedIn search results based
+                  on your ICP criteria
+                </p>
+              </motion.div>
+
+              <motion.div
+                className="space-y-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="space-y-2">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 text-sm">
+                    <p className="flex items-start gap-2">
+                      <ExternalLink className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                      <span>
+                        Go to{" "}
+                        <a
+                          href="https://www.linkedin.com/search/results/people/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline font-medium"
+                        >
+                          LinkedIn People Search
+                        </a>
+                        , apply filters based on your ICP criteria, then copy
+                        the URL from your browser's address bar.
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="relative">
+                    <Input
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      placeholder="https://www.linkedin.com/search/results/people/?keywords=..."
+                      className="py-3 pl-10 pr-4 rounded-lg text-gray-900"
+                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep("input")}
+                    className="px-4"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={!linkedinUrl}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6"
+                  >
                     Find Matching Profiles
                   </Button>
                 </div>
@@ -435,7 +533,7 @@ export default function IcpFinder() {
                 <AnimatePresence mode="wait">
                   {[
                     "Initializing analysis...",
-                    "Fetching profiles...",
+                    "Fetching profiles from LinkedIn...",
                     "Profiles found, analyzing...",
                     "Matching criteria...",
                     "Preparing results...",
