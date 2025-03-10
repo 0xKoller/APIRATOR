@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { getUnipileProvider } from "../services/unipileProviderService";
 import { MessagingError } from "../types/errors";
+import { AIService } from "../services/aiProvider";
 
 const router = express.Router();
 
@@ -163,7 +164,7 @@ router.post("/auth-link", async (req: Request, res: Response) => {
  */
 router.post("/linkedin/search", async (req: Request, res: Response) => {
   try {
-    const { accountId, url } = req.body;
+    const { accountId, url, icp } = req.body;
 
     if (!accountId || !url) {
       return res.status(400).json({
@@ -178,9 +179,27 @@ router.post("/linkedin/search", async (req: Request, res: Response) => {
       url
     );
 
+    const aiService = new AIService();
+    const matchResults = await Promise.all(
+      searchResults.map(async (result) => {
+        const matchResult = await aiService.compareICPWithLinkedinProfile(
+          icp,
+          result
+        );
+        return matchResult;
+      })
+    );
+
+    const searchResultsWithMatchResults = searchResults.map(
+      (result, index) => ({
+        ...result,
+        ...matchResults[index],
+      })
+    );
+
     return res.status(200).json({
       success: true,
-      data: searchResults,
+      data: searchResultsWithMatchResults,
     });
   } catch (error) {
     console.error("Error searching LinkedIn profiles:", error);

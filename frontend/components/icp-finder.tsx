@@ -161,6 +161,7 @@ export default function IcpFinder() {
         {
           accountId: selectedAccountId,
           url: linkedinUrl,
+          icp: icpCriteria,
         }
       );
 
@@ -180,6 +181,8 @@ export default function IcpFinder() {
             return {
               id: profile.member_id || profile.id || `profile-${index}`,
               name: `${profile.name || ""}`,
+              public_profile_url:
+                profile.public_profile_url?.split("?")[0] || "",
               avatar:
                 profile.profile_picture_url ||
                 "/placeholder.svg?height=40&width=40",
@@ -194,8 +197,8 @@ export default function IcpFinder() {
               postsTopics: "",
               networkDistance: profile.network_distance || "unknown",
               sharedConnectionsCount: profile.shared_connections_count || 0,
-              matchScore: mockProfile.matchScore,
-              matchReason: mockProfile.matchReason,
+              matchScore: profile.matchScore || mockProfile.matchScore,
+              matchReason: profile.matchReason || mockProfile.matchReason,
             };
           }
         );
@@ -230,7 +233,7 @@ export default function IcpFinder() {
     setSelectedTab("person");
 
     // Set the search query in the network finder
-    setUrl(profile.name);
+    setUrl(profile.public_profile_url);
   };
 
   return (
@@ -303,21 +306,6 @@ export default function IcpFinder() {
                         {errors["name"]}
                       </p>
                     )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="organization_icp_id">
-                      Organization ICP ID
-                    </Label>
-                    <Input
-                      id="organization_icp_id"
-                      value={icpCriteria.organization_icp_id || ""}
-                      onChange={(e) =>
-                        setIcpCriteria({ organization_icp_id: e.target.value })
-                      }
-                      placeholder="Optional identifier for your organization"
-                      className="mt-1 py-2 rounded-lg"
-                    />
                   </div>
 
                   <Accordion
@@ -715,6 +703,7 @@ export default function IcpFinder() {
                     "Fetching profiles from LinkedIn...",
                     "Profiles found, analyzing...",
                     "Matching criteria...",
+                    "Comparing profiles...",
                     "Preparing results...",
                   ].map((text, i) => (
                     <motion.p
@@ -785,89 +774,91 @@ export default function IcpFinder() {
             </div>
 
             <div className="space-y-4">
-              {results.map((profile, index) => (
-                <motion.div
-                  key={profile.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.15 }}
-                >
-                  <Card
-                    className={cn(
-                      "hover:shadow-md transition-all overflow-hidden cursor-pointer",
-                      index === 0
-                        ? "border-blue-200 bg-gradient-to-r from-blue-50 to-white"
-                        : ""
-                    )}
-                    onClick={() => handleProfileClick(profile)}
+              {results
+                .sort((a, b) => b.matchScore - a.matchScore)
+                .map((profile, index) => (
+                  <motion.div
+                    key={profile.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.15 }}
                   >
-                    <CardContent className="p-0">
-                      <div className="flex items-start p-4">
-                        <Avatar className="h-12 w-12 mr-4 flex-shrink-0">
-                          <AvatarImage
-                            src={profile.avatar}
-                            alt={profile.name}
-                          />
-                          <AvatarFallback className="bg-blue-100 text-blue-600">
-                            {profile.name.substring(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
+                    <Card
+                      className={cn(
+                        "hover:shadow-md transition-all overflow-hidden cursor-pointer",
+                        index === 0
+                          ? "border-blue-200 bg-gradient-to-r from-blue-50 to-white"
+                          : ""
+                      )}
+                      onClick={() => handleProfileClick(profile)}
+                    >
+                      <CardContent className="p-0">
+                        <div className="flex items-start p-4">
+                          <Avatar className="h-12 w-12 mr-4 flex-shrink-0">
+                            <AvatarImage
+                              src={profile.avatar}
+                              alt={profile.name}
+                            />
+                            <AvatarFallback className="bg-blue-100 text-blue-600">
+                              {profile.name.substring(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <div>
-                              <h3 className="font-medium text-lg text-black">
-                                {profile.name}
-                              </h3>
-                              <p className="text-gray-600 text-sm mt-1">
-                                {profile.role} • {profile.location}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <div>
+                                <h3 className="font-medium text-lg text-black">
+                                  {profile.name}
+                                </h3>
+                                <p className="text-gray-600 text-sm mt-1">
+                                  {profile.role} • {profile.location}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={cn(
+                                    "px-3 py-1 rounded-full text-sm font-medium",
+                                    profile.matchScore >= 90
+                                      ? "bg-green-100 text-green-800"
+                                      : profile.matchScore >= 75
+                                      ? "bg-blue-100 text-blue-800"
+                                      : profile.matchScore >= 60
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  )}
+                                >
+                                  {profile.matchScore}% match
+                                </div>
+                                <ChevronRight className="text-gray-400" />
+                              </div>
+                            </div>
+
+                            <div className="mt-3">
+                              <p className="text-gray-700 text-sm">
+                                {profile.description}
                               </p>
                             </div>
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={cn(
-                                  "px-3 py-1 rounded-full text-sm font-medium",
-                                  profile.matchScore >= 90
-                                    ? "bg-green-100 text-green-800"
-                                    : profile.matchScore >= 75
-                                    ? "bg-blue-100 text-blue-800"
-                                    : profile.matchScore >= 60
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : "bg-gray-100 text-gray-800"
-                                )}
-                              >
-                                {profile.matchScore}% match
-                              </div>
-                              <ChevronRight className="text-gray-400" />
+
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {profile.skills?.split(", ").map((skill, i) => (
+                                <span
+                                  key={i}
+                                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+
+                            <div className="mt-4 text-sm text-gray-500 border-t pt-3">
+                              <p>{profile.matchReason}</p>
                             </div>
                           </div>
-
-                          <div className="mt-3">
-                            <p className="text-gray-700 text-sm">
-                              {profile.description}
-                            </p>
-                          </div>
-
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {profile.skills?.split(", ").map((skill, i) => (
-                              <span
-                                key={i}
-                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-
-                          <div className="mt-4 text-sm text-gray-500 border-t pt-3">
-                            <p>{profile.matchReason}</p>
-                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
             </div>
           </motion.div>
         )}

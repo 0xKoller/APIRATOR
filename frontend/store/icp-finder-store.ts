@@ -31,6 +31,7 @@ export interface IcpProfile {
   id: string;
   name: string;
   avatar: string;
+  public_profile_url: string;
   role: string;
   description?: string;
   location?: string;

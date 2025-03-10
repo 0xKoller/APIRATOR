@@ -20,6 +20,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ai-sdk/openai": "^1.2.1",
+    "ai": "^4.1.54",
     "axios": "^1.6.2",
     "axios-retry": "^3.8.1",
     "cors": "^2.8.5",
